@@ -17,6 +17,7 @@ export default auth((req) => {
     "/blog/(.*)",
     "/jobs",
     "/opengraph-image",
+    "/sentry-example-page",
   ];
   const isPublicPage =
     publicPages.includes(pathname) ||
