@@ -2,15 +2,14 @@
 import { institutionData, stateData } from "@/utils/FilterData";
 import { RegisterRequest } from "@/app/services/auth.request";
 import ReactSelect from "@/app/components/inputs/ReactSelect";
-import { toast, ToastContainer } from "react-toastify";
 import { yupResolver } from "@hookform/resolvers/yup";
 import PhoneInput from "react-phone-number-input";
 import { BiHide, BiShow } from "react-icons/bi";
-
 import "react-phone-number-input/style.css";
 import { useForm } from "react-hook-form";
 import ResendOTP from "./ResendOTP";
 import { useState } from "react";
+import { toast } from "sonner";
 import Link from "next/link";
 import * as yup from "yup";
 
@@ -60,18 +59,14 @@ export default function StudentSignup() {
       phoneNumber: data?.mobileNumber,
       role: "User",
     };
+
     try {
-      try {
-        const response = await RegisterRequest(body);
-        toast.success(response?.message);
-        setTimeout(() => {
-          setUserEmail(response?.data?.email);
-          setShowRendOTP(true);
-        }, 3000);
-      } catch (emailError: any) {
-        console.error("Error sending email:", emailError);
-        toast.error("Failed to send welcome email.");
-      }
+      const response = await RegisterRequest(body);
+      toast.success(response?.message);
+      setTimeout(() => {
+        setUserEmail(response?.data?.email);
+        setShowRendOTP(true);
+      }, 3000);
     } catch (error: any) {
       toast.error(error?.response?.data?.message || "Registration failed.");
     } finally {
