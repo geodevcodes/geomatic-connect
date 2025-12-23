@@ -42,9 +42,9 @@ export default function Redirect() {
   }, [router]);
 
   return (
-    <div className="flex justify-center items-cente h-screen bg-[#011727]">
+    <div className="flex justify-center h-screen bg-[#011727]">
       <div>
-        <p className="animate-pulse text-lg lg:text-2xl lg:font-semibold text-center font-medium text-[#ffffff] pt-36 px-6">
+        <p className="animate-pulse text-lg lg:text-2xl lg:font-semibold text-center font-medium text-[#ffffff] pt-16 px-6">
           Just a moment while we get things ready for you...
         </p>
         <p className="text-base text-[#ffffff] text-center mt-2 animate-pulse">

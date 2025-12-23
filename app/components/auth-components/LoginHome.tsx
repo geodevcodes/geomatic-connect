@@ -53,8 +53,6 @@ export default function LoginHome() {
       return;
     }
     setIsLoading(false);
-    toast.success("Login Successfully");
-
     const session = await getSession();
 
     if (session?.user?.token) {
