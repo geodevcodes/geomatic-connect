@@ -36,6 +36,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           _id: "",
           role: "User",
           token: "",
+          refreshToken: "",
         };
       },
     }),
@@ -60,9 +61,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               role: user.data.role,
               email: user.data.email,
               token: user.token,
+              refreshToken: user.refreshToken,
             };
           }
-          throw new Error(user.message || "Authentication failed");
+          // throw new Error(user.message || "Authentication failed");
+          // Return null if user data could not be retrieved
+          return null;
         } catch (error) {
           console.error("Auth error:", error);
           return null;
@@ -73,7 +77,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
   session: {
     strategy: "jwt",
-    maxAge: 3600, //1hour
+    maxAge: 86400, //1hour
   },
 
   callbacks: {
@@ -101,6 +105,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               role: savedUser.role,
               email: savedUser.email,
               token: response.data.token,
+              refreshToken: response.data.refreshToken,
             };
           } catch (error) {
             console.error("Error saving Google user to DB:", error);
@@ -132,6 +137,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 role: response.data.data.role,
                 email: response.data.data.email,
                 token: response.data.token,
+                refreshToken: response.data.refreshToken,
               };
             }
           } catch (error) {
@@ -148,6 +154,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             role: user.role,
             email: user.email,
             token: user.token,
+            refreshToken: user.refreshToken,
           };
         }
       }
@@ -158,6 +165,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user._id = token._id as string;
         session.user.role = token.role as string;
         session.user.token = token.token as string;
+        session.user.refreshToken = token.refreshToken as string;
       }
       return session;
     },
