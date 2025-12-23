@@ -104,16 +104,6 @@ export default function LoginHome() {
                 redirect: true,
               })
             }
-            // onClick={async () => {
-            //   await fetch("/api/send", {
-            //     method: "POST",
-            //     body: JSON.stringify({
-            //       email: "olatunde336@gmail.com",
-            //       firstName: "Rasheed Olatunde",
-            //       lastName: "",
-            //     }),
-            //   });
-            // }}
             className="mt-4 py-1 rounded-lg flex items-center justify-center cursor-pointer bg-white text-black font-medium"
           >
             <div>
@@ -190,7 +180,7 @@ export default function LoginHome() {
             {/* ====Forget Password ===== */}
             <Link
               href="/forgot-password"
-              className="ml-4 mt-2 hover:underline block text-xs"
+              className="ml-4 mt-2 hover:underline text-xs text-right block"
             >
               Forgot Password?
             </Link>

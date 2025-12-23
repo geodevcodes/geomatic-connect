@@ -25,7 +25,6 @@ export const RegisterRequest = async (body: any) => {
 
 // REGISTER WITH GOOGLE (SIGN UP)
 export const RegisterWithGoogleRequest = async () => {
-  // const response = await axios.get(`${process.env.NEXT_PUBLIC_BASEURL}/auth/google`, {
   const response = await axios.get(
     `${process.env.NEXT_PUBLIC_BASEURL}/auth/google/redirect`,
     {
