@@ -1,23 +1,23 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { toast } from "sonner";
-
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import {
-  ResendVerifyOTPRequest,
-  VerifyEmailRequest,
+  useResendVerifyOTPRequest,
+  useVerifyEmailRequest,
 } from "@/app/services/auth.request";
+import { toast } from "sonner";
+import Link from "next/link";
 
 interface VerifyEmailProps {
   userEmail: string;
 }
 export default function VerifyEmail({ userEmail }: VerifyEmailProps) {
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
+  const { mutate: verifyUserEmail, isPending } = useVerifyEmailRequest();
+  const { mutate: resendVerifyOTP } = useResendVerifyOTPRequest();
   const [code, setCode] = useState(["", "", "", ""]);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const router = useRouter();
 
   const handleChange = (index: number, value: string) => {
     const newCode = [...code];
@@ -63,24 +63,25 @@ export default function VerifyEmail({ userEmail }: VerifyEmailProps) {
   const handleSubmit = useCallback(
     async (e?: React.FormEvent<HTMLFormElement>) => {
       e?.preventDefault();
-      setIsLoading(true);
       const verificationCode = code.join("");
       console.log(verificationCode, "this is the code");
-      const body = {
+      const payload = {
         code: verificationCode,
       };
-      try {
-        const response = await VerifyEmailRequest(body);
-        toast.success(response?.message);
-        setTimeout(() => {
-          router.push("/login");
-        }, 5000);
-      } catch (error: any) {
-        console.log(error);
-        toast.error(error?.response?.data?.message);
-      } finally {
-        setIsLoading(false);
-      }
+      verifyUserEmail(
+        { payload },
+        {
+          onSuccess: (data) => {
+            toast.success(data?.message);
+            setTimeout(() => {
+              router.push("/login");
+            }, 5000);
+          },
+          onError: () => {
+            console.log("error occured");
+          },
+        }
+      );
     },
     [code, router]
   );
@@ -94,15 +95,20 @@ export default function VerifyEmail({ userEmail }: VerifyEmailProps) {
 
   // Resend verification code
   const resendVerificationCode = async () => {
-    const body = {
+    const payload = {
       email: userEmail,
     };
-    try {
-      const response = await ResendVerifyOTPRequest(body);
-      toast.success(response?.message);
-    } catch (error: any) {
-      toast.error(error?.response?.data?.message);
-    }
+    resendVerifyOTP(
+      { payload },
+      {
+        onSuccess: (data) => {
+          toast.success(data?.message);
+        },
+        onError: () => {
+          console.log("error occured");
+        },
+      }
+    );
   };
 
   return (
@@ -133,10 +139,10 @@ export default function VerifyEmail({ userEmail }: VerifyEmailProps) {
               ))}
             </div>
             <button
-              disabled={isLoading || code.some((digit) => !digit)}
+              disabled={isPending || code.some((digit) => !digit)}
               className="px-8 py-2 cursor-pointer  mt-4 bg-[#1F4D36] text-[16px] text-white dark:text-[#FFFFFF] rounded-lg w-full  transition duration-500 ease-in-out hover:shadow-[0_0_20px_rgba(31,77,54,0.7)] hover:brightness-150"
             >
-              {isLoading ? "Verifying..." : "Verify Email"}
+              {isPending ? "Verifying..." : "Verify Email"}
             </button>
           </form>
 

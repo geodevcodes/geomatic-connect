@@ -1,15 +1,14 @@
 "use client";
-import { useState } from "react";
-import { BiHide, BiShow } from "react-icons/bi";
-import { toast } from "sonner";
-
-import { useForm } from "react-hook-form";
-import * as yup from "yup";
+import { useResetPasswordRequest } from "@/app/services/auth.request";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { BiHide, BiShow } from "react-icons/bi";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { useForm } from "react-hook-form";
 import { ArrowLeft } from "lucide-react";
-import { ResetPasswordRequest } from "@/app/services/auth.request";
+import { useState } from "react";
+import { toast } from "sonner";
+import Link from "next/link";
+import * as yup from "yup";
 
 interface ResetPasswordProps {
   token: string;
@@ -29,10 +28,10 @@ const schema = yup.object().shape({
 });
 
 export default function ResetPassword({ token }: ResetPasswordProps) {
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const { mutate: resetPassword, isPending } = useResetPasswordRequest();
+  const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
 
   // REACT HOOK FORM LOGIC
   const {
@@ -43,26 +42,27 @@ export default function ResetPassword({ token }: ResetPasswordProps) {
 
   //Reset Password User submission Logic
   const onSubmitHandler = async (data: any) => {
-    setIsLoading(true);
     if (data?.password !== data?.confirmPassword) {
       toast.error("Password does not match");
-      setIsLoading(false);
       return;
     }
-    const body = {
+    const payload = {
       password: data?.password,
     };
-    try {
-      const response = await ResetPasswordRequest(body, token);
-      toast.success(response?.message);
-      setTimeout(() => {
-        router.push("/login");
-      }, 5000);
-    } catch (error: any) {
-      toast.error(error?.response?.data?.message);
-    } finally {
-      setIsLoading(false);
-    }
+    resetPassword(
+      { payload, token },
+      {
+        onSuccess: (data) => {
+          toast.success(data?.message);
+          setTimeout(() => {
+            router.push("/login");
+          }, 5000);
+        },
+        onError: () => {
+          console.log("error occured");
+        },
+      }
+    );
   };
 
   return (
@@ -152,16 +152,15 @@ export default function ResetPassword({ token }: ResetPasswordProps) {
             </div>
 
             <button
-              disabled={isLoading}
+              disabled={isPending}
               className="px-8 py-2 cursor-pointer  mt-4 bg-[#1F4D36] text-[16px] text-white rounded-lg w-full  transition duration-500 ease-in-out hover:shadow-[0_0_20px_rgba(31,77,54,0.7)] hover:brightness-150"
             >
-              {isLoading ? "Resetting..." : "Set New Password"}
+              {isPending ? "Resetting..." : "Set New Password"}
             </button>
           </form>
 
           {/* ====== Don't have an account ======  */}
           <div className="mt-4 text-center text-sm">
-            {/* <p>Don&apos;t have an account yet? </p> */}
             <Link
               href="/login"
               className="underline flex items-center justify-center"

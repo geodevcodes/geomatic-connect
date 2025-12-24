@@ -1,14 +1,12 @@
 "use client";
-import { useState } from "react";
-import Link from "next/link";
-import { toast } from "sonner";
-
-import { useForm } from "react-hook-form";
-import * as yup from "yup";
+import { useForgotPasswordRequest } from "@/app/services/auth.request";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useRouter } from "next/navigation";
 import { ArrowLeft, Loader } from "lucide-react";
-import { ForgotPasswordRequest } from "@/app/services/auth.request";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import Link from "next/link";
+import * as yup from "yup";
 
 const schema = yup.object().shape({
   email: yup
@@ -18,8 +16,8 @@ const schema = yup.object().shape({
 });
 
 export default function ForgotPassword() {
+  const { mutate: forgotPassword, isPending } = useForgotPasswordRequest();
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
 
   // REACT HOOK FORM LOGIC
   const {
@@ -30,21 +28,23 @@ export default function ForgotPassword() {
 
   //Forgot Password User submission Logic
   const onSubmitHandler = async (data: any) => {
-    setIsLoading(true);
-    const body = {
+    const payload = {
       email: data?.email,
     };
-    try {
-      const response = await ForgotPasswordRequest(body);
-      toast.success(response?.message);
-      setTimeout(() => {
-        router.push("/reset-password");
-      }, 5000);
-    } catch (error: any) {
-      toast.error(error?.response?.data?.message);
-    } finally {
-      setIsLoading(false);
-    }
+    forgotPassword(
+      { payload },
+      {
+        onSuccess: (data) => {
+          toast.success(data?.message);
+          setTimeout(() => {
+            router.push("/reset-password");
+          }, 5000);
+        },
+        onError: () => {
+          console.log("error occured");
+        },
+      }
+    );
   };
 
   return (
@@ -73,10 +73,10 @@ export default function ForgotPassword() {
               />
             </div>
             <button
-              disabled={isLoading}
+              disabled={isPending}
               className="px-8 py-2 cursor-pointer  mt-4 bg-[#1F4D36] text-[16px] text-white rounded-lg w-full  transition duration-500 ease-in-out hover:shadow-[0_0_20px_rgba(31,77,54,0.7)] hover:brightness-150"
             >
-              {isLoading ? (
+              {isPending ? (
                 <Loader className="size-6 animate-spin mx-auto" />
               ) : (
                 "Send Reset Link"
@@ -86,7 +86,6 @@ export default function ForgotPassword() {
 
           {/* ====== Don't have an account ======  */}
           <div className="mt-4 text-center text-sm">
-            {/* <p>Don&apos;t have an account yet? </p> */}
             <Link
               href="/login"
               className="underline flex items-center justify-center"

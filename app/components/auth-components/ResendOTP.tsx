@@ -1,27 +1,30 @@
 "use client";
-import { ResendVerifyOTPRequest } from "@/app/services/auth.request";
+import { useResendVerifyOTPRequest } from "@/app/services/auth.request";
 import { MdOutlineMail } from "react-icons/md";
 import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
-import { useState } from "react";
 import Link from "next/link";
 
 export default function ResendOTP({ userEmail }: any) {
-  const [isSending, setIsSending] = useState(false);
+  const { mutate: resendVerifyOTP, isPending } = useResendVerifyOTPRequest();
+
   // Resend verification code
   const resendVerificationCode = async () => {
-    setIsSending(true);
-    const body = {
+    const payload = {
       email: userEmail,
     };
-    try {
-      const response = await ResendVerifyOTPRequest(body);
-      toast.success(response?.message);
-    } catch (error: any) {
-      toast.error(error?.response?.data?.message);
-    } finally {
-      setIsSending(false);
-    }
+
+    resendVerifyOTP(
+      { payload },
+      {
+        onSuccess: (data) => {
+          toast.success(data?.message);
+        },
+        onError: () => {
+          console.log("error occured");
+        },
+      }
+    );
   };
   return (
     <>
@@ -53,7 +56,7 @@ export default function ResendOTP({ userEmail }: any) {
                   onClick={() => resendVerificationCode()}
                   className="hover:underline ml-2 text-[#1F4D36]"
                 >
-                  {isSending ? "Resending.." : "Click to resend"}
+                  {isPending ? "Resending.." : "Click to resend"}
                 </button>
               </div>
               <Link
