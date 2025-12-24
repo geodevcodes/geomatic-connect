@@ -89,24 +89,21 @@ export default function Subscribe({ token, userId }: SubscribeProps) {
       metadata: { subscriptionPlan: planMethod },
     };
 
-    acceptPayment(
-      { payload },
-      {
-        onSuccess: (data) => {
-          setIsProcessing(false);
-          if (data?.authorization_url) {
-            localStorage.setItem("paymentReference", data.reference);
-            localStorage.setItem("subscriptionPlan", planMethod);
-            window.location.href = data.authorization_url;
-          } else {
-            toast.error("Unable to initialize payment");
-          }
-        },
-        onError: () => {
-          setIsProcessing(false);
-        },
-      }
-    );
+    acceptPayment(payload, {
+      onSuccess: (data) => {
+        setIsProcessing(false);
+        if (data?.authorization_url) {
+          localStorage.setItem("paymentReference", data.reference);
+          localStorage.setItem("subscriptionPlan", planMethod);
+          window.location.href = data.authorization_url;
+        } else {
+          toast.error("Unable to initialize payment");
+        }
+      },
+      onError: () => {
+        setIsProcessing(false);
+      },
+    });
   };
 
   // verifyPaymentAfterRedirect when page reloads or on mount
@@ -117,8 +114,6 @@ export default function Subscribe({ token, userId }: SubscribeProps) {
     if (storedReference && subscriptionPlan) {
       try {
         await VerifyPaymentRequest(storedReference, subscriptionPlan);
-        // console.log(verifyResponse.message, "this is verify response");
-
         // Clear stored data
         localStorage.removeItem("paymentReference");
         localStorage.removeItem("subscriptionPlan");

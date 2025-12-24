@@ -1,7 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axiosInstance from "./apiClient";
 import { toast } from "sonner";
-import axios from "axios";
 
 // ACCEPT PAYMENT REQUEST
 export const useAcceptPaymentRequest = () => {
@@ -10,7 +9,7 @@ export const useAcceptPaymentRequest = () => {
       const response = await axiosInstance.post("/api/acceptpayment", payload);
       return response.data;
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       // toast.success(data.message);
     },
     onError: (error: any) => {
@@ -24,8 +23,8 @@ export const VerifyPaymentRequest = async (
   reference: any,
   subscriptionPlan: any
 ) => {
-  const response = await axios.get(
-    `${process.env.NEXT_PUBLIC_BASEURL}/api/verifypayment/${reference}?subscriptionPlan=${subscriptionPlan}`,
+  const response = await axiosInstance.get(
+    `/api/verifypayment/${reference}?subscriptionPlan=${subscriptionPlan}`,
     {
       maxBodyLength: Infinity,
       headers: {
