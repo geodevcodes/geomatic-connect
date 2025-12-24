@@ -25,13 +25,6 @@ export const VerifyPaymentRequest = async (
 ) => {
   const response = await axiosInstance.get(
     `/api/verifypayment/${reference}?subscriptionPlan=${subscriptionPlan}`,
-    {
-      maxBodyLength: Infinity,
-      headers: {
-        Accept: "application/vnd.connect.v1+json",
-        "Content-Type": "application/json",
-      },
-    }
   );
   const data = await response.data;
   return data;
