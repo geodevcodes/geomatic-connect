@@ -1,7 +1,7 @@
 import {
-  CompanyApproveStudentRequest,
-  CompanyDeclineStudentRequest,
-  GetStudentsByCompanyRequest,
+  useCompanyApproveStudentRequest,
+  useCompanyDeclineStudentRequest,
+  useGetStudentsByCompanyRequest,
 } from "@/app/services/request.request";
 import { Modal } from "@/app/components/modals/Modal";
 import { CardSkeleton } from "@/app/components/skeletons/CardSkeleton";
@@ -9,7 +9,6 @@ import ApproveMessage from "@/app/components/company-components/ApproveMessage";
 import DeclineMessage from "@/app/components/company-components/DeclineMessage";
 import { CircleUserRound, Eye, GraduationCap, MapPin } from "lucide-react";
 import { Document, Page, pdfjs } from "react-pdf";
-import { useQuery } from "@tanstack/react-query";
 import Trash from "@/app/components/trash/Trash";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
@@ -42,11 +41,16 @@ export default function StudentCard({
   const [showStudentFile, setShowStudentFile] = useState(false);
   const [numPages, setNumPages] = useState<number>();
 
-  const { data: studentsData, isLoading } = useQuery({
-    queryKey: ["getStudentsApi", selectedState, search],
-    queryFn: () =>
-      GetStudentsByCompanyRequest(companyId, token, selectedState, search),
-  });
+  const { data: studentsData, isLoading } = useGetStudentsByCompanyRequest(
+    companyId,
+    selectedState,
+    search
+  );
+  const { mutate: companyApproveStudentRequest } =
+    useCompanyApproveStudentRequest();
+
+  const { mutate: companyDeclineStudentRequest } =
+    useCompanyDeclineStudentRequest();
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }): void {
     setNumPages(numPages);
@@ -54,28 +58,42 @@ export default function StudentCard({
 
   // Send Approved Request to Admin Logic
   const handleApprovedRequest = async (requestId: any) => {
-    const body = {
+    const payload = {
       requestId: requestId,
     };
-    try {
-      await CompanyApproveStudentRequest(body, token);
-      toast.success("Request Approved Successfully");
-    } catch (error: any) {
-      toast.error(error?.response?.message || error?.response?.data?.message);
-    }
+    companyApproveStudentRequest(
+      {
+        payload,
+      },
+      {
+        onSuccess: () => {
+          console.log("request approved successfully");
+        },
+        onError: () => {
+          console.log("error creating request");
+        },
+      }
+    );
   };
 
   // Send Decline Request to Admin Logic
   const handleDeclinedRequest = async (requestId: any) => {
-    const body = {
+    const payload = {
       requestId: requestId,
     };
-    try {
-      const response = await CompanyDeclineStudentRequest(body, token);
-      toast.success(response.message);
-    } catch (error: any) {
-      toast.error(error?.response?.message || error?.response?.data?.message);
-    }
+    companyDeclineStudentRequest(
+      {
+        payload,
+      },
+      {
+        onSuccess: () => {
+          console.log("request approved successfully");
+        },
+        onError: () => {
+          console.log("error creating request");
+        },
+      }
+    );
   };
 
   return (
@@ -134,9 +152,7 @@ export default function StudentCard({
                   <div className="space-y-2 my-3 font-light text-sm">
                     <div className="flex items-center gap-2">
                       <GraduationCap size={24} />
-                      <span>
-                        Product of {item?.user?.institutionName}
-                      </span>
+                      <span>Product of {item?.user?.institutionName}</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <div className="flex items-center gap-2">

@@ -1,20 +1,18 @@
 "use client";
 import { JobSkeleton } from "@/app/components/skeletons/JobSkeleton";
 import Applicants from "@/app/components/job-listings/Applicants";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 import DeleteJob from "@/app/components/job-listings/DeleteJob";
 import EditJob from "@/app/components/job-listings/EditJob";
 import { Rss, SquarePen, Trash2 } from "lucide-react";
 import { Modal } from "@/app/components/modals/Modal";
 import { useSession } from "next-auth/react";
 import {
-  deleteJobRequest,
-  getJobRequest,
-  updateJobRequest,
+  useDeleteJobRequest,
+  useGetJobRequest,
+  useUpdateJobRequest,
 } from "@/app/services/job.request";
 import { useState } from "react";
 import Image from "next/image";
-import { toast } from "sonner";
 
 interface JobDetailsProps {
   jobId: string;
@@ -24,39 +22,41 @@ export default function JobDetails({ jobId }: JobDetailsProps) {
   const [showEditJob, setShowEditJob] = useState(false);
   const { data: session } = useSession();
   const token = session?.user?.token as string;
-  const queryClient = useQueryClient();
-
-  const { data: jobData, isLoading } = useQuery({
-    queryKey: ["getJobApi"],
-    queryFn: () => getJobRequest(token, jobId),
-  });
+  const { data: jobData, isLoading } = useGetJobRequest(jobId as string);
+  const { mutate: updateJobRequest } = useUpdateJobRequest();
+  const { mutate: deleteJob } = useDeleteJobRequest();
 
   // Publish Job handler
   const updateJobHandler = async () => {
-    try {
-      const payload = {
-        active: jobData?.data?.active ? false : true,
-      };
-      const response = await updateJobRequest(jobId, token, payload);
-      toast.success(response.message || "Job updated successfully");
-      queryClient.invalidateQueries({ queryKey: ["getJobsApi"] });
-      queryClient.invalidateQueries({ queryKey: ["getJobApi"] });
-    } catch (error: any) {
-      toast.error(error?.response?.message);
-    }
+    const payload = {
+      active: jobData?.data?.active ? false : true,
+    };
+    updateJobRequest(
+      { jobId, payload },
+      {
+        onSuccess: () => {
+          console.log("job updated successfully");
+        },
+        onError: () => {
+          console.log("error updating job");
+        },
+      }
+    );
   };
 
   // Delete A Job Request Logic
   const deleteJobHandler = async () => {
-    try {
-      const response = await deleteJobRequest(jobId, token);
-      await queryClient.invalidateQueries({
-        queryKey: ["getJobsApi"],
-      });
-      toast.success(response.message);
-    } catch (error: any) {
-      toast.error(error?.message);
-    }
+    deleteJob(
+      { jobId },
+      {
+        onSuccess: () => {
+          console.log("job deleted successfully");
+        },
+        onError: () => {
+          console.log("error deleting the job");
+        },
+      }
+    );
   };
 
   return (

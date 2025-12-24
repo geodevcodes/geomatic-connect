@@ -1,5 +1,5 @@
-import { formatDateShort, formats, generateSlug, modules } from "@/utils/utils";
-import { CreateBlogRequest } from "@/app/services/blog.request";
+import { useCreateBlogRequest } from "@/app/services/blog.request";
+import { formatDateShort, generateSlug } from "@/utils/utils";
 import {
   LoaderCircle,
   Plus,
@@ -13,11 +13,11 @@ import React, { useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Modal } from "@/app/components/modals/Modal";
 import { AIGenerateBlog } from "./AIGenerateBlog";
-import { toast } from "sonner";
 import parse from "html-react-parser";
-import Quill from "quill";
 import "quill/dist/quill.snow.css";
+import { toast } from "sonner";
 import Image from "next/image";
+import Quill from "quill";
 
 type BlogData = {
   slug: string;
@@ -51,7 +51,7 @@ export default function CreateBlog({
 
   const editorRef = useRef<HTMLDivElement>(null);
   const quillInstance = useRef<any>(null);
-  const queryClient = useQueryClient();
+  const { mutate: createBlog } = useCreateBlogRequest();
 
   // Initialize Quill
   useEffect(() => {
@@ -221,32 +221,39 @@ export default function CreateBlog({
     // Serialize HTML back to string
     const updatedContent = doc.body.innerHTML;
 
-    try {
-      const response = await CreateBlogRequest({
-        ...blogData,
-        content: updatedContent,
-        banner: bannerUrl,
-        active: mode === "publish",
-      });
-      toast.success(response?.message);
-      queryClient.invalidateQueries({ queryKey: ["getBlogsApi"] });
-      // Clear blog data
-      setBlogData({
-        slug: "",
-        authorName: "",
-        banner: "",
-        title: "",
-        subTitle: "",
-        content: "",
-        readTime: "3 min read",
-      });
-      setShowCreateBlog(false);
-    } catch (err: any) {
-      toast.error(err?.response?.message);
-    } finally {
-      setIsCreating(false);
-      setIsPublishing(false);
-    }
+    const payload = {
+      ...blogData,
+      content: updatedContent,
+      banner: bannerUrl,
+      active: mode === "publish",
+    };
+    createBlog(
+      {
+        payload,
+      },
+      {
+        onSuccess: () => {
+          setBlogData({
+            slug: "",
+            authorName: "",
+            banner: "",
+            title: "",
+            subTitle: "",
+            content: "",
+            readTime: "3 min read",
+          });
+          setShowCreateBlog(false);
+          setIsCreating(false);
+          setIsPublishing(false);
+        },
+
+        onError: () => {
+          console.log("error occured");
+          setIsCreating(false);
+          setIsPublishing(false);
+        },
+      }
+    );
   };
 
   return (

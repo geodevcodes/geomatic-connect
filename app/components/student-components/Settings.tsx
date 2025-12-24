@@ -1,21 +1,19 @@
 "use client";
 import SubscribeModal from "@/app/components/student-components/SubscribeModal";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 import ReactSelect from "@/app/components/inputs/ReactSelect";
 import { institutionData, stateData } from "@/utils/FilterData";
 import {
-  GetUserProfileRequest,
-  UpdateUserProfileRequest,
+  useGetUserProfileRequest,
+  useUpdateUserProfile,
 } from "@/app/services/users.request";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { toast, ToastContainer } from "react-toastify";
-
 import { LoaderCircle, Upload } from "lucide-react";
 import { Modal } from "@/app/components/modals/Modal";
+import { toast } from "sonner";
 
 interface SettingsProps {
   token: string;
@@ -53,15 +51,9 @@ export default function Settings({ token, userId }: SettingsProps) {
   );
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [selectedDocument, setSelectedDocument] = useState<File | null>(null);
-
-  const [isUpdating, setIsUpdating] = useState<boolean>(false);
-  const queryClient = useQueryClient();
   const [showSubscribe, setShowSubscribe] = useState(false);
-
-  const { data: userProfileData } = useQuery({
-    queryKey: ["getUserProfileApi"],
-    queryFn: () => GetUserProfileRequest(userId, token),
-  });
+  const { data: userProfileData } = useGetUserProfileRequest(userId as string);
+  const { mutate: updateUserRequest, isPending } = useUpdateUserProfile();
 
   // REACT HOOK FORM LOGIC
   const {
@@ -132,34 +124,34 @@ export default function Settings({ token, userId }: SettingsProps) {
 
   // Submit handler for the form
   const onSubmitHandler = async (data: any) => {
-    setIsUpdating(true);
+    const formData = new FormData();
+    formData.append("fullName", data?.fullName);
+    formData.append("aboutMe", data.aboutMe);
+    formData.append("email", data?.email);
+    formData.append("phoneNumber", data?.mobileNumber);
+    formData.append("state", data?.state);
+    formData.append("institutionName", data?.institutionName);
 
-    try {
-      const formData = new FormData();
-      formData.append("fullName", data?.fullName);
-      formData.append("aboutMe", data.aboutMe);
-      formData.append("email", data?.email);
-      formData.append("phoneNumber", data?.mobileNumber);
-      formData.append("state", data?.state);
-      formData.append("institutionName", data?.institutionName);
-
-      // Only append files if they are selected
-      if (selectedFile) {
-        formData.append("avatarImage", selectedFile);
-      }
-      if (selectedDocument) {
-        formData.append("documentFile", selectedDocument);
-      }
-
-      const response = await UpdateUserProfileRequest(userId, token, formData);
-      toast.success(response?.message);
-      queryClient.invalidateQueries({ queryKey: ["getUserProfileApi"] });
-      queryClient.invalidateQueries({ queryKey: ["getUsersApi"] });
-    } catch (error: any) {
-      toast.error(error?.response?.message);
-    } finally {
-      setIsUpdating(false);
+    // Only append files if they are selected
+    if (selectedFile) {
+      formData.append("avatarImage", selectedFile);
     }
+    if (selectedDocument) {
+      formData.append("documentFile", selectedDocument);
+    }
+
+    const payload = { formData };
+    updateUserRequest(
+      { userId, payload },
+      {
+        onSuccess: () => {
+          console.log("profile updated successfully");
+        },
+        onError: () => {
+          console.log("error updating user profile");
+        },
+      }
+    );
   };
 
   return (
@@ -375,10 +367,10 @@ export default function Settings({ token, userId }: SettingsProps) {
 
         <div>
           <button
-            disabled={isUpdating}
+            disabled={isPending}
             className=" mt-6 rounded-md  px-3.5 py-2 font-light text-white shadow-sm bg-gradient-to-r from-[#49AD51] to-[#B1D045]  cursor-pointer"
           >
-            {isUpdating ? (
+            {isPending ? (
               <span className="flex space-x-4 gap-3">
                 <LoaderCircle className="animate-spin" /> Updating...
               </span>

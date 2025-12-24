@@ -165,7 +165,7 @@ export default function Navbar() {
           {!dropNav && (
             <div className="flex items-center gap-4 lg:hidden">
               <ThemeToggle />
-              <div className="flex lg:hidden bg-[#F2F6F6] dark:bg-secondary dark:border-muted-foreground dark:border-[0.1px]   border border-slate-200 p-2 rounded-lg">
+              <div className="flex lg:hidden bg-[#F2F6F6] dark:bg-slate-950 dark:border-[0.1px]  border p-1 rounded-lg">
                 <HiMenu
                   className="text-lg transition text-[#014751] dark:text-secondary-foreground"
                   size={32}

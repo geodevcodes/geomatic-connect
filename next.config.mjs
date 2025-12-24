@@ -20,7 +20,6 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "res.cloudinary.com",
-        port: "",
       },
       {
         protocol: "https",
@@ -29,6 +28,10 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "avatars.githubusercontent.com",
+      },
+      {
+        protocol: "https",
+        hostname: "api.dicebear.com",
       },
     ],
     qualities: [25, 50, 75, 100],

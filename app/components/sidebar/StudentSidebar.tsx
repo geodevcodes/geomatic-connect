@@ -1,28 +1,20 @@
 "use client";
-import { GetUserByIdRequest } from "@/app/services/request.request";
+import { useGetUserByIdRequest } from "@/app/services/request.request";
 import { ChevronRight, LogOut, Settings } from "lucide-react";
 import { studentNavItems } from "@/utils/sidebarLinks";
 import { useEffect, useRef, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
-import { cn } from "@/utils/utils";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 export function StudentSidebar({ session }: { session: any }) {
   const userId = session?.user?._id;
-  const token = session?.user?.token;
   const [showSignOutProfile, setShowSignOutProfile] = useState(false);
   const pathname = usePathname();
   const addSignOutProfileRef = useRef(null);
   const activeSegment = pathname.split("/")[2];
-
-  console.log(pathname);
-
-  const { data: userData } = useQuery({
-    queryKey: ["getUserByIdApi"],
-    queryFn: () => GetUserByIdRequest(userId, token),
-  });
+  const { data: userData } = useGetUserByIdRequest(userId);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

@@ -1,12 +1,10 @@
 "use client";
 import SubscribeModal from "@/app/components/student-components/SubscribeModal";
-import { GetUserByIdRequest } from "@/app/services/request.request";
+import { useGetUserByIdRequest } from "@/app/services/request.request";
 import CompanyCard from "@/app/components/cards/CompanyCard";
 import ReactSelect from "@/app/components/inputs/ReactSelect";
 import { Modal } from "@/app/components/modals/Modal";
 import { stateData } from "@/utils/FilterData";
-import { useQuery } from "@tanstack/react-query";
-
 import { useDebounce } from "use-debounce";
 import { useState } from "react";
 
@@ -23,11 +21,7 @@ export default function StudentHome({ session }: StudentHomeProps) {
   const [showSubscribe, setShowSubscribe] = useState<boolean>(false);
   const [search, setSearch] = useState("");
   const [debouncedSearch] = useDebounce(search, 500);
-
-  const { data: userData } = useQuery({
-    queryKey: ["getUserByIdApi"],
-    queryFn: () => GetUserByIdRequest(userId, token),
-  });
+  const { data: userData } = useGetUserByIdRequest(userId);
 
   return (
     <>

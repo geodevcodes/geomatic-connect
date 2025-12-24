@@ -1,15 +1,14 @@
-import { formatDateShort, formats, generateSlug, modules } from "@/utils/utils";
-import { UpdateBlogRequest } from "@/app/services/blog.request";
 import { LoaderCircle, Plus, Share2, Trash, Upload, X } from "lucide-react";
+import { useUpdateBlogRequest } from "@/app/services/blog.request";
+import { formatDateShort, generateSlug } from "@/utils/utils";
 import React, { useEffect, useRef, useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
 import { Modal } from "@/app/components/modals/Modal";
-import { toast } from "sonner";
 import parse from "html-react-parser";
-import Quill from "quill";
 import "quill/dist/quill.snow.css";
+import { toast } from "sonner";
 import Image from "next/image";
 import Link from "next/link";
+import Quill from "quill";
 
 interface BlogDetailDataProps {
   data: {
@@ -64,7 +63,7 @@ export default function EditBlog({
 
   const editorRef = useRef<HTMLDivElement>(null);
   const quillInstance = useRef<any>(null);
-  const queryClient = useQueryClient();
+  const { mutate: updateBlogRequest } = useUpdateBlogRequest();
 
   // Initialize Quill
   useEffect(() => {
@@ -218,50 +217,53 @@ export default function EditBlog({
       }
     }
 
-    try {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(blogData.content, "text/html");
-      const images = doc.querySelectorAll("img");
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(blogData.content, "text/html");
+    const images = doc.querySelectorAll("img");
 
-      for (let img of images) {
-        const src = img.getAttribute("src");
-        if (src && src.startsWith("data:image/")) {
-          // Upload to Cloudinary
-          const formData = new FormData();
-          formData.append("file", src);
-          formData.append("upload_preset", "geomatic-connect");
+    for (let img of images) {
+      const src = img.getAttribute("src");
+      if (src && src.startsWith("data:image/")) {
+        // Upload to Cloudinary
+        const formData = new FormData();
+        formData.append("file", src);
+        formData.append("upload_preset", "geomatic-connect");
 
-          const res = await fetch(
-            `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_NAME}/image/upload`,
-            {
-              method: "POST",
-              body: formData,
-            }
-          );
-          const data = await res.json();
-          img.setAttribute("src", data.secure_url);
-        }
+        const res = await fetch(
+          `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_NAME}/image/upload`,
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+        const data = await res.json();
+        img.setAttribute("src", data.secure_url);
       }
-
-      const updatedContent = doc.body.innerHTML;
-
-      const updatedBlog = {
-        ...blogData,
-        content: updatedContent,
-        banner: bannerUrl,
-        active: mode === "publish",
-      };
-
-      const response = await UpdateBlogRequest(blogId, token, updatedBlog);
-      toast.success(response.message);
-      queryClient.invalidateQueries({ queryKey: ["getSingleBlogApi"] });
-      setShowEditBlog(false);
-    } catch (err: any) {
-      toast.error(err?.response?.message);
-    } finally {
-      setIsUpdating(false);
-      setIsPublishing(false);
     }
+
+    const updatedContent = doc.body.innerHTML;
+
+    const payload = {
+      ...blogData,
+      content: updatedContent,
+      banner: bannerUrl,
+      active: mode === "publish",
+    };
+
+    updateBlogRequest(
+      { blogId, payload },
+      {
+        onSuccess: () => {
+          setShowEditBlog(false);
+          setIsUpdating(false);
+          setIsPublishing(false);
+        },
+        onError: () => {
+          setIsUpdating(false);
+          setIsPublishing(false);
+        },
+      }
+    );
   };
 
   return (

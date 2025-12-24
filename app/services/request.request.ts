@@ -1,310 +1,222 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import axiosInstance from "./apiClient";
 import axios from "axios";
+import { toast } from "sonner";
 
 // GET(READ) REQUEST
-export const GetAllNotifications = async (
-  token: string,
-  pageParam = 1,
+export const useGetAllNotifications = (
+  pageNumber: number = 1,
   limit: number
 ) => {
-  try {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BASEURL}/api/requests?pageNumber=${pageParam}&limit=${limit}`,
-      {
-        maxBodyLength: Infinity,
-        headers: {
-          Accept: "application/vnd.connect.v1+json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    const data = await response.data;
-    return data;
-  } catch (error: any) {
-    // Handle the error appropriately
-    console.error("Error fetching notifications:", error.message || error);
-    throw new Error(
-      error.response?.data?.message || "Failed to fetch notifications."
-    );
-  }
+  return useQuery({
+    queryKey: ["getNotificationsApi", pageNumber],
+    queryFn: async () => {
+      const response = await axiosInstance.get("/api/requests", {
+        params: { pageNumber, limit },
+      });
+      return response.data;
+    },
+  });
 };
 
 // GET(READ) ALL COMPANIES REQUEST
-export const GetCompaniesRequest = async (
-  token: string,
-  state: string,
-  search: string
-) => {
-  try {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BASEURL}/api/users/companies`,
-      {
-        maxBodyLength: Infinity,
+export const useGetCompaniesRequest = (state: string, search: string) => {
+  return useQuery({
+    queryKey: ["getCompaniesApi", state, search],
+    queryFn: async () => {
+      const response = await axiosInstance.get("/api/users/companies", {
         params: { state, search },
-        headers: {
-          Accept: "application/vnd.connect.v1+json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    const data = await response.data;
-    return data;
-  } catch (error: any) {
-    throw new Error(
-      error.response?.data?.message ||
-        `Failed to fetch companies in state ${state}.`
-    );
-  }
+      });
+      return response.data;
+    },
+  });
 };
 
 // GET(READ) ALL STUDENTS REQUEST
-export const GetStudentsRequest = async (token: string) => {
-  try {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BASEURL}/api/users/students`,
-      {
-        maxBodyLength: Infinity,
-        headers: {
-          Accept: "application/vnd.connect.v1+json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    const data = await response.data;
-    return data;
-  } catch (error: any) {
-    // Handle the error appropriately
-    console.error("Error fetching students' requests:", error.message || error);
-    throw new Error(
-      error.response?.data?.message || "Failed to fetch students' requests."
-    );
-  }
+export const useGetStudentsRequest = () => {
+  return useQuery({
+    queryKey: ["studentsApi"],
+    queryFn: async () => {
+      const response = await axiosInstance.get("/api/users/students");
+      return response.data;
+    },
+    enabled: true,
+  });
 };
 
 // GET USER BY ID REQUEST
-export const GetUserByIdRequest = async (userId: string, token: string) => {
-  try {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BASEURL}/api/users/${userId}`,
-      {
-        maxBodyLength: Infinity,
-        headers: {
-          Accept: "application/vnd.connect.v1+json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    const data = await response.data;
-    return data;
-  } catch (error: any) {
-    // Handle the error appropriately
-    console.error(
-      `Error fetching user with ID ${userId}:`,
-      error.message || error
-    );
-    throw new Error(
-      error.response?.data?.message || `Failed to fetch user with ID ${userId}.`
-    );
-  }
+export const useGetUserByIdRequest = (userId: string) => {
+  return useQuery({
+    queryKey: ["getUserByIdApi", userId],
+    queryFn: async () => {
+      const response = await axiosInstance.get(`/api/users/${userId}`);
+      return response.data;
+    },
+    enabled: !!userId,
+  });
 };
 
 //MAKE A REQUEST (Send request to Admin)
-export const StudentSendRequestToAdmin = async (body: any, token: any) => {
-  try {
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_BASEURL}/api/requests/send-to-admin`,
-      body,
-      {
-        headers: {
-          Accept: "application/vnd.connect.v1+json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    const data = response.data;
-    console.log(data, "data is here");
-    if (!data) return;
-    return data;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
+export const useStudentSendRequestToAdmin = () => {
+  return useMutation({
+    mutationFn: async (payload: any) => {
+      const response = await axiosInstance.post(
+        "/api/requests/send-to-admin",
+        payload
+      );
+      return response.data;
+    },
+    onSuccess: (data) => {
+      toast.success(data.message);
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Something went wrong");
+    },
+  });
 };
 
 //FORWARD A REQUEST (Forward request to Company)
-export const AdminSendRequestToCompany = async (body: any, token: any) => {
-  try {
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_BASEURL}/api/requests/send-to-company`,
-      body,
-      {
-        headers: {
-          Accept: "application/vnd.connect.v1+json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    const data = response.data;
-    console.log(data, "data is here");
-    if (!data) return;
-    return data;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
+export const useAdminSendRequestToCompany = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: any) => {
+      const response = await axiosInstance.post(
+        "/api/requests/send-to-company",
+        payload
+      );
+      return response.data;
+    },
+    onSuccess: (data) => {
+      toast.success(data.message);
+      queryClient.invalidateQueries({
+        queryKey: ["getNotificationsApi"],
+      });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Something went wrong");
+    },
+  });
 };
 
 //APPROVED REQUEST BY COMPANY (Company approved a student request)
-export const CompanyApproveStudentRequest = async (body: any, token: any) => {
-  try {
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_BASEURL}/api/requests/company-interest/approve`,
-      body,
-      {
-        headers: {
-          Accept: "application/vnd.connect.v1+json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    const data = response.data;
-    console.log(data, "data is here");
-    if (!data) return;
-    return data;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
+export const useCompanyApproveStudentRequest = () => {
+  return useMutation({
+    mutationFn: async (payload: any) => {
+      const response = await axiosInstance.post(
+        "/api/requests/company-interest/approve",
+        payload
+      );
+      return response.data;
+    },
+    onSuccess: (data) => {
+      toast.success(data.message);
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Something went wrong");
+    },
+  });
 };
 
 //APPROVED REQUEST BY ADMIN (Admin approved a student request)
-export const AdminApproveStudentRequest = async (body: any, token: any) => {
-  try {
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_BASEURL}/api/requests/admin/approve`,
-      body,
-      {
-        headers: {
-          Accept: "application/vnd.connect.v1+json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    const data = response.data;
-    console.log(data, "data is here");
-    if (!data) return;
-    return data;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
+export const useAdminApproveStudentRequest = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: any) => {
+      const response = await axiosInstance.post(
+        "/api/requests/admin/approve",
+        payload
+      );
+      return response.data;
+    },
+    onSuccess: (data) => {
+      toast.success(data.message);
+      queryClient.invalidateQueries({
+        queryKey: ["getNotificationsApi"],
+      });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Something went wrong");
+    },
+  });
 };
 
 //DECLINED REQUEST BY COMPANY (Company declined a student request)
-export const CompanyDeclineStudentRequest = async (body: any, token: any) => {
-  try {
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_BASEURL}/api/requests/company-interest/decline`,
-      body,
-      {
-        headers: {
-          Accept: "application/vnd.connect.v1+json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    const data = response.data;
-    if (!data) return;
-    return data;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
+export const useCompanyDeclineStudentRequest = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: any) => {
+      const response = await axiosInstance.post(
+        "/api/requests/company-interest/decline",
+        payload
+      );
+      return response.data;
+    },
+    onSuccess: (data) => {
+      toast.success(data.message);
+      queryClient.invalidateQueries({
+        queryKey: ["getNotificationsApi"],
+      });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Something went wrong");
+    },
+  });
 };
 
 //DECLINED REQUEST BY ADMIN (Admin declined a student request)
-export const AdminDeclineStudentRequest = async (body: any, token: any) => {
-  try {
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_BASEURL}/api/requests/admin/decline`,
-      body,
-      {
-        headers: {
-          Accept: "application/vnd.connect.v1+json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    const data = response.data;
-    console.log(data, "data is here");
-    if (!data) return;
-    return data;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
+export const useAdminDeclineStudentRequest = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: any) => {
+      const response = await axiosInstance.post(
+        "/api/requests/admin/decline",
+        payload
+      );
+      return response.data;
+    },
+    onSuccess: (data) => {
+      toast.success(data.message);
+      queryClient.invalidateQueries({
+        queryKey: ["getNotificationsApi"],
+      });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Something went wrong");
+    },
+  });
 };
 
 // GET STUDENTS BY COMPANY ID REQUEST
-export const GetStudentsByCompanyRequest = async (
-  companyId: any,
-  token: any,
+export const useGetStudentsByCompanyRequest = (
+  companyId: string,
   state: string,
   search: string
 ) => {
-  try {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BASEURL}/api/requests/company/${companyId}`,
-      {
-        params: { state, search },
-        headers: {
-          Accept: "application/vnd.connect.v1+json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    const data = await response.data;
-    return data;
-  } catch (error: any) {
-    throw new Error(
-      error.response?.data?.message ||
-        `Failed to fetch students for company with ID ${companyId}.`
-    );
-  }
+  return useQuery({
+    queryKey: ["getStudentsApi", state, search],
+    queryFn: async () => {
+      const response = await axiosInstance.get(
+        `/api/requests/company/${companyId}`,
+        {
+          params: { state, search },
+        }
+      );
+      return response.data;
+    },
+    enabled: !!companyId,
+  });
 };
 
 // GET COMPANIES BY STUDENT ID REQUEST
-export const GetCompaniesByStudentRequest = async (
-  studentId: any,
-  token: any
-) => {
-  try {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BASEURL}/api/requests/student/${studentId}`,
-      {
-        maxBodyLength: Infinity,
-        headers: {
-          Accept: "application/vnd.connect.v1+json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    const data = await response.data;
-    return data;
-  } catch (error: any) {
-    // Handle the error appropriately
-    console.error(
-      `Error fetching companies for student with ID ${studentId}:`,
-      error.message || error
-    );
-    throw new Error(
-      error.response?.data?.message ||
-        `Failed to fetch companies for student with ID ${studentId}.`
-    );
-  }
+export const useGetCompaniesByStudentRequest = (studentId: string) => {
+  return useQuery({
+    queryKey: ["getUserByIdApi", studentId],
+    queryFn: async () => {
+      const response = await axiosInstance.get(
+        `/api/requests/student/${studentId}`
+      );
+      return response.data;
+    },
+    enabled: !!studentId,
+  });
 };

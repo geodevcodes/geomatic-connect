@@ -17,10 +17,9 @@ import { Table } from "@/app/components/tables/Table";
 import { ArrowDown, File } from "lucide-react";
 import SendRequest from "./RequestDetails";
 import {
-  AdminApproveStudentRequest,
-  AdminDeclineStudentRequest,
+  useAdminApproveStudentRequest,
+  useAdminDeclineStudentRequest,
 } from "@/app/services/request.request";
-import { toast } from "sonner";
 
 interface notificationsData {
   _id: string;
@@ -92,14 +91,11 @@ RequestsListProps) {
   // React TanStank Query Invalidate Logic
   const queryClient = useQueryClient();
   console.log(notificationsData, "this is notificationsData here=====");
-  // Revalidation of checkbox
-  const handleDeleteInvoiceRevalidate = async () => {
-    const selectedRowsIds = selectedRows?.map((row) => row?.id);
-    const idsString = JSON.stringify(selectedRowsIds);
-    await queryClient.invalidateQueries({ queryKey: ["getNotificationsApi"] });
-    setSelectedRows([]);
-    setResetCheckboxes((prev) => !prev);
-  };
+
+  const { mutate: adminApproveStudentRequest } =
+    useAdminApproveStudentRequest();
+  const { mutate: adminDeclineStudentRequest } =
+    useAdminDeclineStudentRequest();
 
   // handle check box
   function IndeterminateCheckbox({
@@ -165,40 +161,46 @@ RequestsListProps) {
 
   // Approve Handler
   const approveHandler = async (requestId: any) => {
-    const body = {
+    const payload = {
       requestId,
     };
-    try {
-      const response = await AdminApproveStudentRequest(body, token);
-      toast.success(response?.message);
-      await queryClient.invalidateQueries({
-        queryKey: ["getNotificationsApi"],
-      });
-    } catch (error: any) {
-      console.log(error?.response?.data);
-      toast.error(error?.response?.data);
-    } finally {
-      setShowActions(false);
-    }
+    adminApproveStudentRequest(
+      {
+        payload,
+      },
+      {
+        onSuccess: () => {
+          console.log("request approved successfully");
+          setShowActions(false);
+        },
+        onError: () => {
+          console.log("error creating request");
+          setShowActions(false);
+        },
+      }
+    );
   };
 
   // Decline Handler
   const declineHandler = async (requestId: any) => {
-    const body = {
+    const payload = {
       requestId,
     };
-    try {
-      const response = await AdminDeclineStudentRequest(body, token);
-      toast.success(response?.message);
-      await queryClient.invalidateQueries({
-        queryKey: ["getNotificationsApi"],
-      });
-    } catch (error: any) {
-      console.log(error?.response?.data);
-      toast.error(error?.response?.data);
-    } finally {
-      setShowActions(false);
-    }
+    adminDeclineStudentRequest(
+      {
+        payload,
+      },
+      {
+        onSuccess: () => {
+          console.log("request declined successfully");
+          setShowActions(false);
+        },
+        onError: () => {
+          console.log("error creating request");
+          setShowActions(false);
+        },
+      }
+    );
   };
 
   // create columnHelper

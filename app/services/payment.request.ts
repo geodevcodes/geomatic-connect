@@ -1,26 +1,22 @@
+import { useMutation, useQuery } from "@tanstack/react-query";
+import axiosInstance from "./apiClient";
+import { toast } from "sonner";
 import axios from "axios";
 
 // ACCEPT PAYMENT REQUEST
-export const AcceptPaymentRequest = async (body: any) => {
-  try {
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_BASEURL}/api/acceptpayment`,
-      body,
-      {
-        headers: {
-          Accept: "application/vnd.connect.v1+json",
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    const data = response.data;
-    console.log(data, "data is here");
-    if (!data) return;
-    return data;
-  } catch (error) {
-    console.error(error, "this is error here====");
-    throw error;
-  }
+export const useAcceptPaymentRequest = () => {
+  return useMutation({
+    mutationFn: async (payload: any) => {
+      const response = await axiosInstance.post("/api/acceptpayment", payload);
+      return response.data;
+    },
+    onSuccess: (data) => {
+      // toast.success(data.message);
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Something went wrong");
+    },
+  });
 };
 
 // VERIFY PAYMENT
@@ -41,25 +37,35 @@ export const VerifyPaymentRequest = async (
   const data = await response.data;
   return data;
 };
+// export const useVerifyPaymentRequest = (
+//   reference: any,
+//   subscriptionPlan: any
+// ) => {
+//   return useQuery({
+//     queryKey: ["verifyPayment", reference, subscriptionPlan],
+//     queryFn: async () => {
+//       const response = await axiosInstance.get(
+//         `/api/verifypayment/${reference}?subscriptionPlan=${subscriptionPlan}`
+//       );
+//       return response.data;
+//     },
+//     enabled: !!reference && !!subscriptionPlan,
+//   });
+// };
 
 // GET ALL SUBSCRIPTIONS
-export const GetAllSubscriptions = async (
-  pageNumber = 1,
+export const useGetAllSubscriptions = (
+  pageNumber: number = 1,
   limit: number,
-  token: string,
   search: string
 ) => {
-  const response = await axios.get(
-    `${process.env.NEXT_PUBLIC_BASEURL}/api/subscription`,
-    {
-      maxBodyLength: Infinity,
-      params: { pageNumber, limit, search },
-      headers: {
-        Accept: "application/vnd.connect.v1+json",
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-  const data = await response.data;
-  return data;
+  return useQuery({
+    queryKey: ["subscription", pageNumber],
+    queryFn: async () => {
+      const response = await axiosInstance.get("/api/subscription", {
+        params: { pageNumber, limit, search },
+      });
+      return response.data;
+    },
+  });
 };

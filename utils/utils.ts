@@ -1,10 +1,3 @@
-import { type ClassValue, clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
-
 // FUNCTION TO FORMAT DATE
 export const formatDate = (dateString: string) => {
   const date = new Date(dateString);
@@ -99,3 +92,7 @@ export const formats = [
   "code-block",
   "color",
 ];
+
+export const avatarPlaceholderUrlOne = `https://api.dicebear.com/7.x/avataaars/png?seed=5`;
+export const avatarPlaceholderUrlTwo = `https://api.dicebear.com/7.x/avataaars/png?seed=10`;
+export const avatarPlaceholderUrlThree = `https://api.dicebear.com/7.x/avataaars/png?seed=15`;

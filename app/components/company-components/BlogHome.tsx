@@ -1,8 +1,7 @@
 "use client";
 import { BlogCard, BlogSmallCard } from "@/app/components/cards/BlogCard";
 import { BlogSkeleton } from "@/app/components/skeletons/BlogSkeleton";
-import { GetBlogsRequest } from "@/app/services/blog.request";
-import { useQuery } from "@tanstack/react-query";
+import { useGetBlogsRequest } from "@/app/services/blog.request";
 import { formatDate } from "@/utils/utils";
 import { useState } from "react";
 import Link from "next/link";
@@ -11,11 +10,7 @@ export default function BlogHome() {
   const [currentPage, setCurrentPage] = useState(1);
   const [limit] = useState(6);
   const skeletonArray = [1, 2, 3, 4, 5, 6];
-
-  const { data: blogsData, isLoading } = useQuery({
-    queryKey: ["getBlogsApi", currentPage],
-    queryFn: () => GetBlogsRequest(currentPage, limit),
-  });
+  const { data: blogsData, isLoading } = useGetBlogsRequest(currentPage, limit);
 
   return (
     <>

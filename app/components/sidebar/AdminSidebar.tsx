@@ -4,7 +4,7 @@ import { adminNavItems } from "@/utils/sidebarLinks";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
-import { cn } from "@/utils/utils";
+import { cn } from "@/lib/utils";
 import Link from "next/link";
 
 export function AdminSidebar() {

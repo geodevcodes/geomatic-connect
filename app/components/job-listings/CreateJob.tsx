@@ -1,5 +1,5 @@
 "use client";
-import { CreateJobRequest } from "@/app/services/job.request";
+import { useCreateJobRequest } from "@/app/services/job.request";
 import {
   accommodationData,
   experienceData,
@@ -8,12 +8,10 @@ import {
 } from "@/utils/FilterData";
 import ReactSelect from "@/app/components/inputs/ReactSelect";
 import { ArrowRight, LoaderCircle, X } from "lucide-react";
-import { useQueryClient } from "@tanstack/react-query";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useEffect, useRef, useState } from "react";
 import { formats, modules } from "@/utils/utils";
+import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 import * as yup from "yup";
 import Quill from "quill";
 import "quill/dist/quill.snow.css";
@@ -33,12 +31,10 @@ const schema = yup.object().shape({
 });
 
 interface CreateJobProps {
-  token: string;
   setShowCreateJob?: any;
 }
-export default function CreateJob({ token, setShowCreateJob }: CreateJobProps) {
-  const [isCreating, setIsCreating] = useState<boolean>(false);
-  const queryClient = useQueryClient();
+export default function CreateJob({ setShowCreateJob }: CreateJobProps) {
+  const { mutate: createJob, isPending } = useCreateJobRequest();
 
   // REACT HOOK FORM LOGIC
   const {
@@ -73,27 +69,28 @@ export default function CreateJob({ token, setShowCreateJob }: CreateJobProps) {
 
   // Submit handler for the form
   const onSubmitHandler = async (data: any) => {
-    setIsCreating(true);
     const jobDescription = quillInstance.current.root.innerHTML;
-    try {
-      const payload = {
-        experienceLevel: data?.experienceLevel,
-        accommodation: data?.accommodation,
-        jobTitle: data?.jobTitle,
-        location: data?.location,
-        jobType: data?.jobType,
-        jobDescription,
-      };
-
-      const response = await CreateJobRequest(payload, token);
-      toast.success(response.message || "Job created successfully");
-      queryClient.invalidateQueries({ queryKey: ["getJobsApi"] });
-      setShowCreateJob(false);
-    } catch (error: any) {
-      toast.error(error?.response?.message);
-    } finally {
-      setIsCreating(false);
-    }
+    const payload = {
+      experienceLevel: data?.experienceLevel,
+      accommodation: data?.accommodation,
+      jobTitle: data?.jobTitle,
+      location: data?.location,
+      jobType: data?.jobType,
+      jobDescription,
+    };
+    createJob(
+      {
+        payload,
+      },
+      {
+        onSuccess: () => {
+          setShowCreateJob(false);
+        },
+        onError: () => {
+          console.log("error creating job");
+        },
+      }
+    );
   };
 
   return (
@@ -248,10 +245,10 @@ export default function CreateJob({ token, setShowCreateJob }: CreateJobProps) {
 
         <div>
           <button
-            disabled={isCreating}
+            disabled={isPending}
             className="relative group w-full mt-6 rounded-md flex items-center justify-center px-3.5 py-3 font-light text-white shadow-sm cursor-pointer bg-gradient-to-r from-[#49AD51] to-[#B1D045] dark:bg-muted dark:bg-gradient-to-r dark:from-muted-foreground dark:to-muted"
           >
-            {isCreating ? (
+            {isPending ? (
               <span className="flex space-x-4 gap-3">
                 <LoaderCircle className="animate-spin" /> Creating...
               </span>

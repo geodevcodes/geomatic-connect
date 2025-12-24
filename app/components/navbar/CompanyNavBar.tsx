@@ -1,17 +1,17 @@
 "use client";
 import GeomaticLogoWhite from "@/public/images/Geomatic-Connect-Logo2w.png";
-import { GetUserNotifications } from "@/app/services/notifications.request";
+import { useGetUserNotifications } from "@/app/services/notifications.request";
 import { ThemeToggle } from "@/app/components/theme-toggle/ThemeToggle";
 import GeomaticLogo from "@/public/images/Geomatic-Connect-Logo2b.png";
-import { GetUserProfileRequest } from "@/app/services/users.request";
+import { useGetUserProfileRequest } from "@/app/services/users.request";
 import { Bell, LogOut, PencilLine, Settings } from "lucide-react";
 import Logout from "@/app/components/auth-components/Logout";
 import { companyMobileRoutes } from "@/utils/sidebarLinks";
+import { avatarPlaceholderUrlThree } from "@/utils/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { Modal } from "@/app/components/modals/Modal";
 import { MdOutlinePriceChange } from "react-icons/md";
 import { useEffect, useRef, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { HiMenu, HiX } from "react-icons/hi";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -19,7 +19,6 @@ import Link from "next/link";
 
 export default function CompanyNavBar({ session }: { session: any }) {
   const userId = session?.user?._id;
-  const token = session?.user?.token;
   const [dropNav, setDropNav] = useState(false);
   const [showActions, setShowActions] = useState(false);
   const [showLogOut, setShowLogOut] = useState(false);
@@ -27,16 +26,11 @@ export default function CompanyNavBar({ session }: { session: any }) {
   const router = useRouter();
   const [currentPage] = useState(1);
   const [limit] = useState(6);
-
-  const { data: userData } = useQuery({
-    queryKey: ["getUserProfileApi"],
-    queryFn: () => GetUserProfileRequest(userId, token),
-  });
-
-  const { data: notificationData } = useQuery({
-    queryKey: ["getUserNotificationApi", currentPage],
-    queryFn: () => GetUserNotifications(token, currentPage, limit),
-  });
+  const { data: userData } = useGetUserProfileRequest(userId as string);
+  const { data: notificationData } = useGetUserNotifications(
+    currentPage,
+    limit
+  );
 
   // Handle click outside of dropdown to close it
   useEffect(() => {
@@ -163,21 +157,18 @@ export default function CompanyNavBar({ session }: { session: any }) {
                   className="flex justify-start"
                 >
                   <div className="relative cursor-pointer">
-                    {!userData?.data?.avatarImage ? (
-                      <div className="w-[50px] h-[50px] border-[1.3px] border-slate-200 items-center justify-center flex rounded-full text-[20px] bg-[#524A4C] text-white font-bold">
-                        {userData?.data?.companyName
-                          ?.charAt(0)
-                          ?.toUpperCase() ?? "N/A"}
-                      </div>
-                    ) : (
-                      <Image
-                        src={userData?.data?.avatarImage}
-                        alt="user avatar pics"
-                        width={42}
-                        height={42}
-                        className="w-[42px] h-[42px] border-[1.3px] border-slate-200 items-center justify-center flex rounded-full object-cover"
-                      />
-                    )}
+                    <Image
+                      src={
+                        userData?.avatarImage
+                          ? userData.avatarImage
+                          : avatarPlaceholderUrlThree
+                      }
+                      alt="Company avatar pics"
+                      width={42}
+                      height={42}
+                      className="w-[36px] h-[36px] border-[1.3px] border-slate-200 items-center justify-center flex rounded-full object-cover"
+                    />
+
                     <div
                       ref={dropdownRef}
                       className={`${

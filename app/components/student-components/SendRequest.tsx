@@ -1,4 +1,4 @@
-import { StudentSendRequestToAdmin } from "@/app/services/request.request";
+import { useStudentSendRequestToAdmin } from "@/app/services/request.request";
 import ReactSelect from "@/app/components/inputs/ReactSelect";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { ArrowRight, X } from "lucide-react";
@@ -54,9 +54,10 @@ export default function SendRequest({
   token,
   selectedCompanyId,
 }: SendRequestProps) {
-  const [isSaving, setIsSaving] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState<boolean>(false);
+  const { mutate: studentSendRequestToAdmin } = useStudentSendRequestToAdmin();
   const [responseData, setResponseData] = useState<any[]>([]);
+  const [isSaving, setIsSaving] = useState(false);
   const router = useRouter();
 
   // REACT HOOK FORM LOGIC
@@ -92,7 +93,7 @@ export default function SendRequest({
       return;
     }
     setIsSaving(true);
-    const body = {
+    const payload = {
       studentId: userData?.data?._id,
       companyId: companyId ? companyId : selectedCompanyId,
       email: data?.email,
@@ -101,19 +102,23 @@ export default function SendRequest({
       requestPurpose: data?.requestPurpose,
       backgroundHistory: data?.backgroundHistory,
     };
-    try {
-      const response = await StudentSendRequestToAdmin(body, token);
-      setResponseData(response);
-      toast.success(response?.message);
-      setShowSuccessMessage(true);
-    } catch (error: any) {
-      toast.error(error?.response?.message || error?.response?.data?.message);
-    } finally {
-      setIsSaving(false);
-      setTimeout(() => {
-        setShowSendRequest(false);
-      }, 5000);
-    }
+    studentSendRequestToAdmin(
+      {
+        payload,
+      },
+      {
+        onSuccess: (data) => {
+          setResponseData(data);
+          setShowSuccessMessage(true);
+          setTimeout(() => {
+            setShowSendRequest(false);
+          }, 5000);
+        },
+        onError: () => {
+          console.log("error creating request");
+        },
+      }
+    );
   };
 
   return (

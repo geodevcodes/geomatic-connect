@@ -1,7 +1,9 @@
 "use client";
-import { applyToJobRequest, getJobRequest } from "@/app/services/job.request";
+import {
+  useApplyToJobRequest,
+  useGetJobRequest,
+} from "@/app/services/job.request";
 import { Facebook, Linkedin, LoaderCircle, Share2 } from "lucide-react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { RiTwitterXFill } from "react-icons/ri";
 import { usePathname } from "next/navigation";
@@ -17,18 +19,12 @@ interface JobDetailsProps {
 }
 export default function JobDetails({ jobId }: JobDetailsProps) {
   const [showActions, setShowActions] = useState(false);
-  const [isApplying, setIsApplying] = useState(false);
   const shareRef = useRef<HTMLDivElement | null>(null);
   const pathname = usePathname();
   const { data: session } = useSession();
-  const token = session?.user?.token as string;
   const userId = session?.user?._id as string;
-  const queryClient = useQueryClient();
-
-  const { data: jobData, isLoading } = useQuery({
-    queryKey: ["getJobApi", jobId],
-    queryFn: () => getJobRequest(token, jobId),
-  });  
+  const { data: jobData, isLoading } = useGetJobRequest(jobId as string);
+  const { mutate: applyToJob, isPending } = useApplyToJobRequest();
 
   // Share dropdown Handler
   useEffect(() => {
@@ -56,17 +52,19 @@ export default function JobDetails({ jobId }: JobDetailsProps) {
 
   // Apply To Job handler
   const applyToJobHandler = async () => {
-    setIsApplying(true);
-    try {
-      const response = await applyToJobRequest(jobId, token);
-      toast.success(response.message || "Job application successfully");
-      queryClient.invalidateQueries({ queryKey: ["getJobsApi"] });
-      queryClient.invalidateQueries({ queryKey: ["getJobApi"] });
-    } catch (error: any) {
-      toast.error(error?.response?.data?.message);
-    } finally {
-      setIsApplying(false);
-    }
+    applyToJob(
+      {
+        jobId,
+      },
+      {
+        onSuccess: () => {
+          console.log("applied to job successfully");
+        },
+        onError: () => {
+          console.log("error applying to job");
+        },
+      }
+    );
   };
 
   const hasApplied = jobData?.data?.applicants?.some(
@@ -164,7 +162,7 @@ export default function JobDetails({ jobId }: JobDetailsProps) {
                 </button>
                 <button
                   onClick={applyToJobHandler}
-                  disabled={hasApplied || isApplying}
+                  disabled={hasApplied || isPending}
                   className={`${
                     hasApplied
                       ? "bg-gray-400 cursor-not-allowed"
@@ -173,7 +171,7 @@ export default function JobDetails({ jobId }: JobDetailsProps) {
                 >
                   {hasApplied
                     ? "Applied"
-                    : isApplying
+                    : isPending
                       ? "Applying..."
                       : "Apply Now"}
                 </button>

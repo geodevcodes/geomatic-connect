@@ -1,11 +1,8 @@
 "use client";
-import { DeleteNotificationRequest } from "@/app/services/notifications.request";
+import { useDeleteNotificationRequest } from "@/app/services/notifications.request";
 import { motion, AnimatePresence } from "framer-motion";
-import { useQueryClient } from "@tanstack/react-query";
 import { Dispatch, SetStateAction } from "react";
 import { CircleAlert } from "lucide-react";
-import { toast } from "sonner";
-import { useState } from "react";
 
 interface DeleteNotificationProps {
   setShowDeleteNotification: Dispatch<SetStateAction<boolean>>;
@@ -18,28 +15,26 @@ export default function DeleteNotification({
   token,
   messageData,
 }: DeleteNotificationProps) {
-  const [isDeleting, setIsDeleting] = useState(false);
   const notificationId = messageData?._id;
 
   // refetch survey using Query client
-  const queryClient = useQueryClient();
+  const { mutate: deleteNotification, isPending } =
+    useDeleteNotificationRequest();
 
   // Delete Notification Logic
   const handleDelete = async () => {
-    setIsDeleting(true);
-    try {
-      const response = await DeleteNotificationRequest(notificationId, token);
-      console.log(JSON.stringify(response.data));
-      toast.success(response?.message);
-      await queryClient.invalidateQueries({
-        queryKey: ["getUserNotificationApi"],
-      });
-      setShowDeleteNotification(false);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsDeleting(false);
-    }
+    deleteNotification(
+      { notificationId },
+      {
+        onSuccess: () => {
+          console.log("notification deleted successfully");
+          setShowDeleteNotification(false);
+        },
+        onError: () => {
+          console.log("error deleting the notification");
+        },
+      }
+    );
   };
 
   return (
@@ -82,9 +77,9 @@ export default function DeleteNotification({
                 "bg-[#D92D20] hover:bg-[#D92D20]/90 rounded-[8px] text-white px-[28px] cursor-pointer py-[12px]  text-center  w-full"
               }
               onClick={handleDelete}
-              disabled={isDeleting}
+              disabled={isPending}
             >
-              {isDeleting ? "Deleting..." : "Delete"}
+              {isPending ? "Deleting..." : "Delete"}
             </button>
           </div>
         </motion.div>

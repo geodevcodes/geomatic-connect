@@ -1,8 +1,7 @@
 "use client";
 import { BlogCard, BlogSmallCard } from "@/app/components/cards/BlogCard";
 import { BlogSkeleton } from "@/app/components/skeletons/BlogSkeleton";
-import { GetBlogsRequest } from "@/app/services/blog.request";
-import { useQuery } from "@tanstack/react-query";
+import { useGetBlogsRequest } from "@/app/services/blog.request";
 import { ArrowLeft, Plus } from "lucide-react";
 import { formatDate } from "@/utils/utils";
 import CreateBlog from "./CreateBlog";
@@ -17,11 +16,7 @@ export default function BlogHome({ token }: BlogHomeProps) {
   const skeletonArray = [1, 2, 3, 4, 5, 6];
   const [currentPage, setCurrentPage] = useState(1);
   const [limit] = useState(6);
-
-  const { data: blogsData, isLoading } = useQuery({
-    queryKey: ["getBlogsApi", currentPage],
-    queryFn: () => GetBlogsRequest(currentPage, limit),
-  });
+  const { data: blogsData, isLoading } = useGetBlogsRequest(currentPage, limit);
 
   return (
     <>

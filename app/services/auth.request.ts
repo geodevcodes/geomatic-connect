@@ -1,19 +1,22 @@
-import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import axiosInstance from "./apiClient";
 import { toast } from "sonner";
 
 // CREATE NEW USER REQUEST (REGISTER USER)
 export const useRegisterRequest = () => {
+  const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ payload }: { payload: any }) => {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BASEURL}/auth/register`,
-        payload
-      );
+    mutationFn: async ({ formData }: { formData: any }) => {
+      const response = await axiosInstance.post(`/auth/register`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       return response.data;
     },
     onSuccess: () => {
       toast.success("Register successfully 🎉");
+      queryClient.invalidateQueries({ queryKey: ["getUsersApi"] });
     },
     onError: (error: any) => {
       if (error.response?.status === 500) {
@@ -25,42 +28,14 @@ export const useRegisterRequest = () => {
   });
 };
 
-export const RegisterRequest = async (body: any) => {
-  try {
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_BASEURL}/auth/register`,
-      body,
-      {
-        headers: {
-          Accept: "application/vnd.connect.v1+json",
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
-    const data = response.data;
-    console.log(data, "data is here");
-    if (!data) return;
-    return data;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-};
-
 // EMAIL VERIFICATION REQUEST
 export const useVerifyEmailRequest = () => {
   return useMutation({
     mutationFn: async ({ payload }: { payload: any }) => {
       try {
-        const response = await axios.post(
-          `${process.env.NEXT_PUBLIC_BASEURL}/auth/verify-email`,
-          payload,
-          {
-            headers: {
-              Accept: "application/vnd.connect.v1+json",
-              "Content-Type": "application/json",
-            },
-          }
+        const response = await axiosInstance.post(
+          `/auth/verify-email`,
+          payload
         );
         return response.data;
       } catch (error) {
@@ -85,15 +60,9 @@ export const useResendVerifyOTPRequest = () => {
   return useMutation({
     mutationFn: async ({ payload }: { payload: any }) => {
       try {
-        const response = await axios.post(
-          `${process.env.NEXT_PUBLIC_BASEURL}/auth/resend-verification`,
-          payload,
-          {
-            headers: {
-              Accept: "application/vnd.connect.v1+json",
-              "Content-Type": "application/json",
-            },
-          }
+        const response = await axiosInstance.post(
+          `/auth/resend-verification`,
+          payload
         );
         return response.data;
       } catch (error) {
@@ -118,15 +87,9 @@ export const useForgotPasswordRequest = () => {
   return useMutation({
     mutationFn: async ({ payload }: { payload: any }) => {
       try {
-        const response = await axios.post(
-          `${process.env.NEXT_PUBLIC_BASEURL}/auth/forgot-password`,
-          payload,
-          {
-            headers: {
-              Accept: "application/vnd.connect.v1+json",
-              "Content-Type": "application/json",
-            },
-          }
+        const response = await axiosInstance.post(
+          `/auth/forgot-password`,
+          payload
         );
         return response.data;
       } catch (error) {
@@ -134,7 +97,7 @@ export const useForgotPasswordRequest = () => {
       }
     },
     onSuccess: () => {
-      toast.success("Forgot password initiated successfully 🎉");
+      toast.success("Forgot password initiated successfully");
     },
     onError: (error: any) => {
       if (error.response?.status === 500) {
@@ -151,15 +114,9 @@ export const useResetPasswordRequest = () => {
   return useMutation({
     mutationFn: async ({ payload, token }: { payload: any; token: string }) => {
       try {
-        const response = await axios.post(
-          `${process.env.NEXT_PUBLIC_BASEURL}/auth/reset-password/${token}`,
-          payload,
-          {
-            headers: {
-              Accept: "application/vnd.connect.v1+json",
-              "Content-Type": "application/json",
-            },
-          }
+        const response = await axiosInstance.post(
+          `/auth/reset-password/${token}`,
+          payload
         );
         return response.data;
       } catch (error) {

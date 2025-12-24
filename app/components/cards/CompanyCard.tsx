@@ -1,10 +1,9 @@
 "use client";
-import { GetCompaniesRequest } from "@/app/services/request.request";
+import { useGetCompaniesRequest } from "@/app/services/request.request";
 import { CircleUserRound, GraduationCap, MapPin, Send } from "lucide-react";
 import SendRequest from "@/app/components/student-components/SendRequest";
 import { CardSkeleton } from "@/app/components/skeletons/CardSkeleton";
 import { Sheet } from "@/app/components/sheets/Sheet";
-import { useQuery } from "@tanstack/react-query";
 import Trash from "@/app/components/trash/Trash";
 import { motion } from "framer-motion";
 import Image from "next/image";
@@ -31,10 +30,10 @@ export default function CompanyCard({
   selectedState,
   search,
 }: CompanyCardProps) {
-  const { data: companiesData, isLoading } = useQuery({
-    queryKey: ["getCompaniesApi", selectedState, search],
-    queryFn: () => GetCompaniesRequest(token, selectedState, search),
-  });
+  const { data: companiesData, isLoading } = useGetCompaniesRequest(
+    selectedState,
+    search
+  );
 
   return (
     <>
@@ -60,9 +59,6 @@ export default function CompanyCard({
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: false, amount: 0.2 }}
-              // whileHover={{
-              //   scale: 1.05,
-              // }}
               animate={{ x: 0 }}
               transition={{ type: "spring", duration: 3 }}
               key={item._id}

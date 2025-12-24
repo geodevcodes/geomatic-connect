@@ -1,14 +1,13 @@
 "use client";
 import DeleteNotification from "@/app/components/student-components/DeleteNotification";
 import MessageDetails from "@/app/components/student-components/MessageDetails";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Modal } from "@/app/components/modals/Modal";
 import { Clock, LoaderCircle } from "lucide-react";
 import { X } from "lucide-react";
 import { useState } from "react";
 import {
-  GetUserNotifications,
-  UpdateUserNotificationRequest,
+  useGetUserNotifications,
+  useUpdateNotificationRequest,
 } from "@/app/services/notifications.request";
 import Trash from "@/app/components/trash/Trash";
 import { formatTimestamp } from "@/utils/utils";
@@ -26,46 +25,44 @@ export default function Notification({ token }: NotificationProps) {
   const [showDeleteNotification, setShowDeleteNotification] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [limit] = useState(6);
+  const { mutate: updateNotificationRequest } = useUpdateNotificationRequest();
 
   // refetch data with Invalidate
-  const queryClient = useQueryClient();
-
   const {
     data: notificationData,
     isLoading,
     isError,
-  } = useQuery({
-    queryKey: ["getUserNotificationApi", currentPage],
-    queryFn: () => GetUserNotifications(token, currentPage, limit),
-  });
+  } = useGetUserNotifications(currentPage, limit);
 
   // Update Submission Handler
-  const updateNotificationHandler = async (
-    notificationId: any,
-    read: boolean,
-    messageInfo: any
-  ) => {
-    if (messageInfo.status !== "None") {
-      setShowMessage(true);
-    }
-    setMessageData(messageInfo);
-    const body = {
-      read: read === false ? true : false,
-    };
-    try {
-      if (read === true) {
-        return;
-      } else {
-        await UpdateUserNotificationRequest(notificationId, token, body);
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      await queryClient.invalidateQueries({
-        queryKey: ["getUserNotificationApi"],
-      });
-    }
-  };
+ const updateNotificationHandler = (
+   notificationId: string,
+   read: boolean,
+   messageInfo: any
+ ) => {
+   if (messageInfo.status !== "None") {
+     setShowMessage(true);
+   }
+   setMessageData(messageInfo);
+
+   // Prevent unnecessary request
+   if (read === true) return;
+   const payload = {
+     read: true,
+   };
+   updateNotificationRequest(
+     { notificationId, payload },
+     {
+       onSuccess: () => {
+         console.log("Notification updated successfully");
+       },
+       onError: (error) => {
+         console.error("Error updating notification", error);
+       },
+     }
+   );
+ };
+
 
   if (isError) {
     redirect("/login");

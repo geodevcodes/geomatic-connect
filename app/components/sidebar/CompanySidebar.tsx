@@ -1,27 +1,20 @@
 "use client";
-import { companyNavItems } from "@/utils/sidebarLinks";
-import { cn } from "@/utils/utils";
-import { useQuery } from "@tanstack/react-query";
+import { useGetUserByIdRequest } from "@/app/services/request.request";
 import { ChevronRight, LogOut, Settings } from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { companyNavItems } from "@/utils/sidebarLinks";
 import { useEffect, useRef, useState } from "react";
-import { GetUserByIdRequest } from "@/app/services/request.request";
+import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
+import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 export function CompanySidebar({ session }: { session: any }) {
   const userId = session?.user?._id;
-  const token = session?.user?.token;
   const [showSignOutProfile, setShowSignOutProfile] = useState(false);
   const pathname = usePathname();
   const activeSegment = pathname.split("/")[2];
   const addSignOutProfileRef = useRef(null);
-  console.log(pathname);
-
-  const { data: userData } = useQuery({
-    queryKey: ["getUserByIdApi"],
-    queryFn: () => GetUserByIdRequest(userId, token),
-  });
+  const { data: userData } = useGetUserByIdRequest(userId);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

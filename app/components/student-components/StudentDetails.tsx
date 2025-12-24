@@ -4,10 +4,8 @@ import Map from "@/app/components/map/Map";
 import { MdOutlineStar } from "react-icons/md";
 import { Sheet } from "@/app/components/sheets/Sheet";
 import SendRequest from "./SendRequest";
-import { GetUserByIdRequest } from "@/app/services/request.request";
-import { useQuery } from "@tanstack/react-query";
-
-import { GetUserProfileRequest } from "@/app/services/users.request";
+import { useGetUserByIdRequest } from "@/app/services/request.request";
+import { useGetUserProfileRequest } from "@/app/services/users.request";
 import { ArrowRight, ChevronRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -23,17 +21,9 @@ export default function StudentDetails({
   const userId = session?.user?._id;
   const token = session?.user.token;
   const [showSendRequest, setShowSendRequest] = useState(false);
+  const { data: userData } = useGetUserByIdRequest(companyId);
+  const { data: userProfileData } = useGetUserProfileRequest(userId as string);
   const router = useRouter();
-
-  const { data: userData } = useQuery({
-    queryKey: ["getCompanyDetailsIdApi"],
-    queryFn: () => GetUserByIdRequest(companyId, token),
-  });
-
-  const { data: userProfileData } = useQuery({
-    queryKey: ["getUserProfileApi"],
-    queryFn: () => GetUserProfileRequest(userId, token),
-  });
 
   return (
     <>

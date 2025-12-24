@@ -1,6 +1,5 @@
-import { AdminSendRequestToCompany } from "@/app/services/request.request";
+import { useAdminSendRequestToCompany } from "@/app/services/request.request";
 import SuccessMessage from "../company-components/SuccessMessage";
-import { useQueryClient } from "@tanstack/react-query";
 import { CircleUserRound, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -26,7 +25,7 @@ export default function RequestDetails({
   const [isForwarding, setIsForwarding] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState<boolean>(false);
   const [responseData, setResponseData] = useState<any[]>([]);
-  const queryClient = useQueryClient();
+  const { mutate: adminSendRequestToCompany } = useAdminSendRequestToCompany();
 
   const notificationArray = notificationsData || [];
   const notification = notificationArray?.find(
@@ -36,23 +35,25 @@ export default function RequestDetails({
   // Forward Request to Company submission Logic
   const handleForwardRequest = async () => {
     setIsForwarding(true);
-    const body = {
+    const payload = {
       requestId: notification?._id,
     };
-    try {
-      const response = await AdminSendRequestToCompany(body, token);
-      setResponseData(response);
-      setShowSendRequest(false);
-      await queryClient.invalidateQueries({
-        queryKey: ["getNotificationsApi"],
-      });
-      toast.success("Request Forwarded Successfully");
-    } catch (error: any) {
-      toast.error(error?.response?.data?.message);
-      toast.error(error?.response?.message);
-    } finally {
-      setIsForwarding(false);
-    }
+    adminSendRequestToCompany(
+      {
+        payload,
+      },
+      {
+        onSuccess: (data) => {
+          setResponseData(data);
+          setShowSendRequest(false);
+          setIsForwarding(false);
+        },
+        onError: () => {
+          console.log("error creating request");
+          setIsForwarding(false);
+        },
+      }
+    );
   };
 
   return (

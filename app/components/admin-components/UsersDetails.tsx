@@ -1,6 +1,5 @@
 "use client";
-import { GetUserByIdRequest } from "@/app/services/request.request";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useGetUserByIdRequest } from "@/app/services/request.request";
 import {
   ChevronRight,
   CircleUserRound,
@@ -10,8 +9,8 @@ import {
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
-  DeleteUserRequest,
-  UpdateUserProfileRequest,
+  useDeleteUserRequest,
+  useUpdateUserProfile,
 } from "@/app/services/users.request";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -89,17 +88,12 @@ const getValidationSchema = (userData: any) => {
 };
 
 export default function UsersDetails({ token, userId }: UsersDetailsProps) {
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [isUpdating, setIsUpdating] = useState<boolean>(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [userImage, setUserImage] = useState<string | undefined>(undefined);
-  const queryClient = useQueryClient();
+  const { data: userProfileData } = useGetUserByIdRequest(userId);
+  const { mutate: updateUserRequest, isPending } = useUpdateUserProfile();
+  const { mutate: deleteUser, isPending: isDeleting } = useDeleteUserRequest();
   const router = useRouter();
-
-  const { data: userProfileData } = useQuery({
-    queryKey: ["getAllUserDetailsApi"],
-    queryFn: () => GetUserByIdRequest(userId, token),
-  });
 
   // REACT HOOK FORM LOGIC
   const {
@@ -114,7 +108,6 @@ export default function UsersDetails({ token, userId }: UsersDetailsProps) {
     resolver: yupResolver(getValidationSchema(userProfileData?.data)),
   });
   const accomodationValue = watch("accomodation");
-  console.log(userProfileData?.data, "this is data hereo=====");
   // Default values when userProfileData is available
   useEffect(() => {
     if (userProfileData) {
@@ -153,54 +146,50 @@ export default function UsersDetails({ token, userId }: UsersDetailsProps) {
 
   // Submit handler for the form
   const onSubmitHandler = async (data: any) => {
-    setIsUpdating(true);
+    const formData = new FormData();
+    const appendIfExists = (formData: FormData, key: string, value: any) => {
+      if (value !== undefined && value !== null) {
+        formData.append(key, value.toString());
+      }
+    };
 
-    try {
-      const formData = new FormData();
-      const appendIfExists = (formData: FormData, key: string, value: any) => {
-        if (value !== undefined && value !== null) {
-          formData.append(key, value.toString());
-        }
-      };
+    appendIfExists(formData, "aboutMe", data.aboutMe);
+    appendIfExists(formData, "email", data.email);
+    appendIfExists(formData, "phoneNumber", data.mobileNumber);
+    appendIfExists(formData, "fullName", data.fullName);
+    appendIfExists(formData, "institutionName", data.institutionName);
+    appendIfExists(formData, "companyAddress", data.companyAddress);
+    appendIfExists(formData, "companyName", data.companyName);
+    appendIfExists(formData, "accomodation", data.accomodation);
+    if (selectedFile) formData.append("avatarImage", selectedFile);
 
-      appendIfExists(formData, "aboutMe", data.aboutMe);
-      appendIfExists(formData, "email", data.email);
-      appendIfExists(formData, "phoneNumber", data.mobileNumber);
-      appendIfExists(formData, "fullName", data.fullName);
-      appendIfExists(formData, "institutionName", data.institutionName);
-      appendIfExists(formData, "companyAddress", data.companyAddress);
-      appendIfExists(formData, "companyName", data.companyName);
-      appendIfExists(formData, "accomodation", data.accomodation);
-      if (selectedFile) formData.append("avatarImage", selectedFile);
-
-      const response = await UpdateUserProfileRequest(userId, token, formData);
-      toast.success(response?.message);
-      queryClient.invalidateQueries({ queryKey: ["getAllUserDetailsApi"] });
-      queryClient.invalidateQueries({ queryKey: ["getUsersApi"] });
-    } catch (error: any) {
-      console.log(error?.response?.data?.message);
-      toast.error(error?.response?.message);
-    } finally {
-      setIsUpdating(false);
-    }
+    const payload = { formData };
+    updateUserRequest(
+      { userId, payload },
+      {
+        onSuccess: () => {
+          console.log("profile updated successfully");
+        },
+        onError: () => {
+          console.log("error updating user profile");
+        },
+      }
+    );
   };
 
   // Delete User Request Logic
   const deleteUserHandler = async () => {
-    setIsDeleting(true);
-    try {
-      const response = await DeleteUserRequest(userId, token);
-      console.log(response, "response data:");
-      await queryClient.invalidateQueries({
-        queryKey: ["getUsersApi"],
-      });
-      toast.success(response.message);
-    } catch (error: any) {
-      toast.error(error?.response?.data?.message);
-      toast.error(error?.response?.message);
-    } finally {
-      setIsDeleting(false);
-    }
+    deleteUser(
+      { userId },
+      {
+        onSuccess: () => {
+          console.log("User deleted successfully");
+        },
+        onError: () => {
+          console.log("error deleting the user");
+        },
+      }
+    );
   };
 
   return (
@@ -282,10 +271,10 @@ export default function UsersDetails({ token, userId }: UsersDetailsProps) {
                   View Document
                 </a>
                 <button
-                  disabled={isUpdating}
+                  disabled={isPending}
                   className="w-[100px] md:w-[150px] px-1.5 py-1.5 md:px-3 md:py-3 font-light text-white rounded-sm shadow-sm bg-gradient-to-r from-[#49AD51] to-[#B1D045] dark:bg-muted dark:bg-gradient-to-r dark:from-muted dark:to-muted-foreground"
                 >
-                  {isUpdating ? (
+                  {isPending ? (
                     <span className="flex space-x-4 gap-3">
                       <LoaderCircle className="animate-spin" /> Updating...
                     </span>

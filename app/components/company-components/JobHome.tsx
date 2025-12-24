@@ -1,25 +1,21 @@
 "use client";
 import { JobSkeleton } from "@/app/components/skeletons/JobSkeleton";
 import JobListingCard from "@/app/components/cards/JobListingCard";
-import { getCompanyJobsRequest } from "@/app/services/job.request";
+import { useGetCompanyJobsRequest } from "@/app/services/job.request";
 import CreateJob from "@/app/components/job-listings/CreateJob";
 import { Modal } from "@/app/components/modals/Modal";
-import { useQuery } from "@tanstack/react-query";
-import { useSession } from "next-auth/react";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 
 export default function JobHome() {
   const [showCreateJob, setShowCreateJob] = useState(false);
-  const { data: session } = useSession();
-  const token = session?.user?.token as string;
   const [currentPage, setCurrentPage] = useState(1);
   const [limit] = useState(6);
 
-  const { data: jobsData, isLoading } = useQuery({
-    queryKey: ["getJobsApi", currentPage],
-    queryFn: () => getCompanyJobsRequest(token, currentPage, limit),
-  });
+  const { data: jobsData, isLoading } = useGetCompanyJobsRequest(
+    currentPage,
+    limit
+  );
 
   return (
     <>
@@ -61,7 +57,7 @@ export default function JobHome() {
         ))
       )}
       <Modal show={showCreateJob} onClose={() => setShowCreateJob(false)}>
-        <CreateJob token={token} setShowCreateJob={setShowCreateJob} />
+        <CreateJob setShowCreateJob={setShowCreateJob} />
       </Modal>
     </>
   );

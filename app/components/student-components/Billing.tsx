@@ -1,15 +1,14 @@
 "use client";
 import PackageInfo from "@/app/components/landing-page-components/PackageInfo";
-import { GetUserByIdRequest } from "@/app/services/request.request";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast, ToastContainer } from "react-toastify";
-
+import { useGetUserByIdRequest } from "@/app/services/request.request";
+import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
-  AcceptPaymentRequest,
+  useAcceptPaymentRequest,
   VerifyPaymentRequest,
 } from "@/app/services/payment.request";
+import { toast } from "sonner";
 
 interface BillingProps {
   token: string;
@@ -23,16 +22,13 @@ export default function Billing({ token, userId }: BillingProps) {
   const [selectedBillingCycleTab, setSelectedBillingCycleTab] =
     useState("Monthly");
   const [isSubscribing, setIsSubscribing] = useState(null);
+  const { mutate: acceptPayment } = useAcceptPaymentRequest();
   const queryClient = useQueryClient();
 
   const handleButtonClick = (planMethod: any) => {
     setIsSubscribing(planMethod);
   };
-
-  const { data: userData } = useQuery({
-    queryKey: ["getUserByIdApi"],
-    queryFn: () => GetUserByIdRequest(userId, token),
-  });
+  const { data: userData } = useGetUserByIdRequest(userId);
 
   const monthlyPlans = [
     {
@@ -83,28 +79,34 @@ export default function Billing({ token, userId }: BillingProps) {
   const billingCycle = selectedBillingCycleTab;
 
   // Payment Handler Logic
-  const handleAcceptPayment = async (amount: Number, planMethod: string) => {
+  const handleAcceptPayment = (amount: number, planMethod: string) => {
+    if (!userData?.data?.email) return;
+
     setIsProcessing(true);
-    const body = {
-      email: userData?.data?.email,
+    const payload = {
+      email: userData.data.email,
       amount,
       metadata: { subscriptionPlan: planMethod },
     };
 
-    try {
-      const response = await AcceptPaymentRequest(body);
-      if (response?.data?.authorization_url) {
-        localStorage.setItem("paymentReference", response.data.reference);
-        localStorage.setItem("subscriptionPlan", planMethod);
-        window.location.href = response?.data?.authorization_url;
-      } else {
-        return;
+    acceptPayment(
+      { payload },
+      {
+        onSuccess: (data) => {
+          setIsProcessing(false);
+          if (data?.authorization_url) {
+            localStorage.setItem("paymentReference", data.reference);
+            localStorage.setItem("subscriptionPlan", planMethod);
+            window.location.href = data.authorization_url;
+          } else {
+            toast.error("Unable to initialize payment");
+          }
+        },
+        onError: () => {
+          setIsProcessing(false);
+        },
       }
-    } catch (error: any) {
-      toast.error(error?.response?.data?.message);
-    } finally {
-      setIsProcessing(false);
-    }
+    );
   };
 
   // verifyPaymentAfterRedirect when page reloads or on mount

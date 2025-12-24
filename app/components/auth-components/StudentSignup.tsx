@@ -1,6 +1,6 @@
 "use client";
 import { institutionData, stateData } from "@/utils/FilterData";
-import { RegisterRequest } from "@/app/services/auth.request";
+import { useRegisterRequest } from "@/app/services/auth.request";
 import ReactSelect from "@/app/components/inputs/ReactSelect";
 import { yupResolver } from "@hookform/resolvers/yup";
 import PhoneInput from "react-phone-number-input";
@@ -9,7 +9,6 @@ import "react-phone-number-input/style.css";
 import { useForm } from "react-hook-form";
 import ResendOTP from "./ResendOTP";
 import { useState } from "react";
-import { toast } from "sonner";
 import Link from "next/link";
 import * as yup from "yup";
 
@@ -37,7 +36,8 @@ export default function StudentSignup() {
   const [showPassword, setShowPassword] = useState(false);
   const [showRendOTP, setShowRendOTP] = useState(false);
   const [userEmail, setUserEmail] = useState(null);
-  const [isSaving, setIsSaving] = useState(false);
+  const { mutateAsync: registerUserRequest, isPending: isSaving } =
+    useRegisterRequest();
 
   const {
     register,
@@ -49,8 +49,7 @@ export default function StudentSignup() {
 
   //Register User submission Logic
   const onSubmitHandler = async (data: any) => {
-    setIsSaving(true);
-    const body = {
+    const formData = {
       fullName: data?.fullName,
       institutionName: data?.institutionName,
       email: data?.email,
@@ -60,18 +59,20 @@ export default function StudentSignup() {
       role: "User",
     };
 
-    try {
-      const response = await RegisterRequest(body);
-      toast.success(response?.message);
-      setTimeout(() => {
-        setUserEmail(response?.data?.email);
-        setShowRendOTP(true);
-      }, 3000);
-    } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Registration failed.");
-    } finally {
-      setIsSaving(false);
-    }
+    await registerUserRequest(
+      { formData },
+      {
+        onSuccess: (data) => {
+          setTimeout(() => {
+            setUserEmail(data?.data?.email);
+            setShowRendOTP(true);
+          }, 3000);
+        },
+        onError: () => {
+          console.log("error creating user");
+        },
+      }
+    );
   };
 
   return (

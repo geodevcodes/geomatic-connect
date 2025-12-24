@@ -1,13 +1,13 @@
 "use client";
 import { accommodationData, stateData } from "@/utils/FilterData";
-import { RegisterRequest } from "@/app/services/auth.request";
+import { useRegisterRequest } from "@/app/services/auth.request";
 import ReactSelect from "@/app/components/inputs/ReactSelect";
 import { useQueryClient } from "@tanstack/react-query";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { ArrowRight, Upload, X } from "lucide-react";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import { useForm } from "react-hook-form";
-import { ArrowRight, Upload, X } from "lucide-react";
 import React, { useState } from "react";
 import { toast } from "sonner";
 import Image from "next/image";
@@ -42,12 +42,10 @@ const schema = yup.object().shape({
 });
 
 export default function AddCompany({ setShowAddCompany }: AddUserProps) {
-  const [isSaving, setIsSaving] = useState(false);
   const [userImage, setUserImage] = useState<string | undefined>(undefined);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-
-  // refetch users
-  const queryClient = useQueryClient();
+  const { mutateAsync: registerUserRequest, isPending: isSaving } =
+    useRegisterRequest();
 
   // REACT HOOK FORM LOGIC
   const {
@@ -80,34 +78,33 @@ export default function AddCompany({ setShowAddCompany }: AddUserProps) {
 
   //Create Company submission Logic
   const onSubmitHandler = async (data: any) => {
-    setIsSaving(true);
-    try {
-      const formData = new FormData();
-      formData.append("companyName", data?.companyName);
-      formData.append("companyAddress", data.companyAddress);
-      formData.append("email", data?.email);
-      formData.append("aboutMe", data?.aboutMe);
-      formData.append("state", data?.state);
-      formData.append("accomodation", data?.accomodation);
-      formData.append("professionalId", data?.professionalId);
-      formData.append("phoneNumber", data?.mobileNumber);
-      formData.append("role", "Company");
-      // formData.append("password", "987654321");
+    const formData = new FormData();
+    formData.append("companyName", data?.companyName);
+    formData.append("companyAddress", data.companyAddress);
+    formData.append("email", data?.email);
+    formData.append("aboutMe", data?.aboutMe);
+    formData.append("state", data?.state);
+    formData.append("accomodation", data?.accomodation);
+    formData.append("professionalId", data?.professionalId);
+    formData.append("phoneNumber", data?.mobileNumber);
+    formData.append("role", "Company");
+    // formData.append("password", "987654321");
 
-      // Only append files if they are selected
-      if (selectedFile) {
-        formData.append("avatarImage", selectedFile);
-      }
-
-      const response = await RegisterRequest(formData);
-      toast.success(response?.message);
-      await queryClient.invalidateQueries({ queryKey: ["getUsersApi"] });
-      setShowAddCompany(false);
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "An error occurred");
-    } finally {
-      setIsSaving(false);
+    // Only append files if they are selected
+    if (selectedFile) {
+      formData.append("avatarImage", selectedFile);
     }
+    await registerUserRequest(
+      { formData },
+      {
+        onSuccess: () => {
+          setShowAddCompany(false);
+        },
+        onError: () => {
+          console.log("error creating company");
+        },
+      }
+    );
   };
 
   return (

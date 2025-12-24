@@ -1,79 +1,69 @@
-import axios from "axios";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import axiosInstance from "./apiClient";
+import { toast } from "sonner";
 
 // GET(READ) USER NOTIFICATIONS
-export const GetUserNotifications = async (
-  token: string,
-  pageParam = 1,
+export const useGetUserNotifications = (
+  pageNumber: number = 1,
   limit: number
 ) => {
-  try {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BASEURL}/api/notifications/user-notifications?pageNumber=${pageParam}&limit=${limit}`,
-      {
-        maxBodyLength: Infinity,
-        headers: {
-          Accept: "application/vnd.connect.v1+json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    const data = await response.data;
-    return data;
-  } catch (error: any) {
-    // Handle the error appropriately
-    console.error("Error fetching notifications:", error.message || error);
-    throw new Error(
-      error.response?.data?.message || "Failed to fetch notifications."
-    );
-  }
+  return useQuery({
+    queryKey: ["notifications", pageNumber],
+    queryFn: async () => {
+      const response = await axiosInstance.get(
+        "/api/notifications/user-notifications",
+        {
+          params: { pageNumber, limit },
+        }
+      );
+      return response.data;
+    },
+  });
 };
 
 // UPDATE USER NOTIFICATIONS
-export const UpdateUserNotificationRequest = async (
-  notificationId: any,
-  token: string,
-  body: any
-) => {
-  try {
-    const response = await axios.put(
-      `${process.env.NEXT_PUBLIC_BASEURL}/api/notifications/${notificationId}`,
-      body,
-      {
-        headers: {
-          Accept: "application/vnd.connect.v1+json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    const data = response.data;
-    console.log(data);
-    if (!data) return;
-    return data;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
+export const useUpdateNotificationRequest = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      notificationId,
+      payload,
+    }: {
+      notificationId: string;
+      payload: any;
+    }) => {
+      const response = await axiosInstance.put(
+        `/api/notifications/${notificationId}`,
+        payload
+      );
+      return response.data;
+    },
+    onSuccess: (data) => {
+      toast.success(data.message || "Notification updated successfully");
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Something went wrong");
+    },
+  });
 };
 
 // DELETE USER NOTIFICATION  REQUEST
-export const DeleteNotificationRequest = async (
-  notificationId: any,
-  token: string
-) => {
-  try {
-    const response = await axios.delete(
-      `${process.env.NEXT_PUBLIC_BASEURL}/api/notifications/${notificationId}`,
-      {
-        maxBodyLength: Infinity,
-        headers: {
-          Accept: "application/vnd.connect.v1+json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    return response.data;
-  } catch (error) {
-    console.error("Error deleting user request:", error);
-    throw error;
-  }
+export const useDeleteNotificationRequest = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ notificationId }: { notificationId: string }) => {
+      const response = await axiosInstance.delete(
+        `/api/notifications/${notificationId}`
+      );
+      return response.data;
+    },
+    onSuccess: (data) => {
+      toast.success(data.message || "Notification deleted successfully");
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Something went wrong");
+    },
+  });
 };

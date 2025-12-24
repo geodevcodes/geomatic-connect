@@ -1,161 +1,116 @@
-import axios from "axios";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import axiosInstance from "./apiClient";
+import { toast } from "sonner";
 
 // CREATE A JOB REQUEST
-export const CreateJobRequest = async (body: any, token: string) => {
-  try {
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_BASEURL}/api/jobs`,
-      body,
-      {
-        headers: {
-          Accept: "application/vnd.connect.v1+json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    const data = response.data;
-    if (!data) return;
-    return data;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
+export const useCreateJobRequest = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: any) => {
+      const response = await axiosInstance.post("/api/jobs", payload);
+      return response.data;
+    },
+    onSuccess: (data) => {
+      toast.success(data.message);
+      queryClient.invalidateQueries({ queryKey: ["jobs"] });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Something went wrong");
+    },
+  });
 };
 
 // GET(READ) ALL JOBS
-export const GetjobsRequest = async (
-  token: string,
-  pageParam = 1,
-  limit: number
-) => {
-  try {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BASEURL}/api/jobs?pageNumber=${pageParam}&limit=${limit}`,
-      {
-        maxBodyLength: Infinity,
-        headers: {
-          Accept: "application/vnd.connect.v1+json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    const data = await response.data;
-    return data;
-  } catch (error: any) {
-    throw new Error(error.response?.data?.message || "Failed to fetch jobs.");
-  }
+export const useGetJobsRequest = (pageNumber: number = 1, limit: number) => {
+  return useQuery({
+    queryKey: ["jobs", pageNumber],
+    queryFn: async () => {
+      const response = await axiosInstance.get("/api/jobs", {
+        params: { pageNumber, limit },
+      });
+      return response.data;
+    },
+  });
 };
 
 // GET(READ) COMPANY JOBS
-export const getCompanyJobsRequest = async (
-  token: string,
-  pageParam = 1,
+export const useGetCompanyJobsRequest = (
+  pageNumber: number = 1,
   limit: number
 ) => {
-  try {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BASEURL}/api/jobs/company-jobs?pageNumber=${pageParam}&limit=${limit}`,
-      {
-        maxBodyLength: Infinity,
-        headers: {
-          Accept: "application/vnd.connect.v1+json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    const data = await response.data;
-    return data;
-  } catch (error: any) {
-    throw new Error(error.response?.data?.message || "Failed to fetch jobs.");
-  }
+  return useQuery({
+    queryKey: ["jobs", pageNumber],
+    queryFn: async () => {
+      const response = await axiosInstance.get("/api/jobs/company-jobs", {
+        params: { pageNumber, limit },
+      });
+      return response.data;
+    },
+  });
 };
 
 // GET(READ) A JOB
-export const getJobRequest = async (token: string, jobId: string) => {
-  try {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BASEURL}/api/jobs/${jobId}`,
-      {
-        maxBodyLength: Infinity,
-        headers: {
-          Accept: "application/vnd.connect.v1+json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    const data = await response.data;
-    return data;
-  } catch (error: any) {
-    throw new Error(error.response?.data?.message || "Failed to fetch jobs.");
-  }
+export const useGetJobRequest = (jobId: string) => {
+  return useQuery({
+    queryKey: ["job", jobId],
+    queryFn: async () => {
+      const response = await axiosInstance.get(`/api/jobs/${jobId}`);
+      return response.data;
+    },
+    enabled: !!jobId,
+  });
 };
 
 // UPDATE A JOB REQUEST
-export const updateJobRequest = async (
-  jobId: any,
-  token: string,
-  body: any
-) => {
-  try {
-    const response = await axios.put(
-      `${process.env.NEXT_PUBLIC_BASEURL}/api/jobs/${jobId}`,
-      body,
-      {
-        headers: {
-          Accept: "application/vnd.connect.v1+json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    const data = response.data;
-    if (!data) return;
-    return data;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
+export const useUpdateJobRequest = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ jobId, payload }: { jobId: string; payload: any }) => {
+      const response = await axiosInstance.put(`/api/jobs/${jobId}`, payload);
+      return response.data;
+    },
+    onSuccess: (data) => {
+      toast.success(data.message || "Job updated successfully");
+      queryClient.invalidateQueries({ queryKey: ["job"] });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Something went wrong");
+    },
+  });
 };
 
 // APPLY TO A JOB REQUEST
-export const applyToJobRequest = async (jobId: string, token: string) => {
-  try {
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_BASEURL}/api/jobs/${jobId}/apply`,
-      {},
-      {
-        headers: {
-          Accept: "application/vnd.connect.v1+json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    const data = response.data;
-    console.log(data, "data is here");
-    if (!data) return;
-    return data;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
+export const useApplyToJobRequest = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ jobId }: { jobId: string }) => {
+      const response = await axiosInstance.post(`/api/jobs/${jobId}/apply`, {});
+      return response.data;
+    },
+    onSuccess: (data) => {
+      toast.success(data.message);
+      queryClient.invalidateQueries({ queryKey: ["job"] });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Something went wrong");
+    },
+  });
 };
 
 // DELETE A JOB  REQUEST
-export const deleteJobRequest = async (jobId: any, token: string) => {
-  try {
-    const response = await axios.delete(
-      `${process.env.NEXT_PUBLIC_BASEURL}/api/jobs/${jobId}`,
-      {
-        maxBodyLength: Infinity,
-        headers: {
-          Accept: "application/vnd.connect.v1+json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    return response.data;
-  } catch (error) {
-    console.error("Error deleting job request:", error);
-    throw error;
-  }
+export const useDeleteJobRequest = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ jobId }: { jobId: string }) => {
+      const response = await axiosInstance.delete(`/api/jobs/${jobId}`);
+      return response.data;
+    },
+    onSuccess: (data) => {
+      toast.success(data.message || "Job deleted successfully");
+      queryClient.invalidateQueries({ queryKey: ["job"] });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Something went wrong");
+    },
+  });
 };

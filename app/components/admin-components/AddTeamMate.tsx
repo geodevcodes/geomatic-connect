@@ -5,7 +5,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useQueryClient } from "@tanstack/react-query";
 import { ArrowRight, Upload, X } from "lucide-react";
-import { RegisterRequest } from "@/app/services/auth.request";
+import { useRegisterRequest } from "@/app/services/auth.request";
 import { toast } from "sonner";
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
@@ -38,9 +38,10 @@ const schema = yup.object().shape({
 });
 
 export default function AddTeamMate({ setShowAddTeamMate }: AddTeamMateProps) {
-  const [isSaving, setIsSaving] = useState(false);
   const [userImage, setUserImage] = useState<string | undefined>(undefined);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const { mutateAsync: registerUserRequest, isPending: isSaving } =
+    useRegisterRequest();
 
   // refetch users
   const queryClient = useQueryClient();
@@ -75,34 +76,33 @@ export default function AddTeamMate({ setShowAddTeamMate }: AddTeamMateProps) {
 
   //Create TeamMate submission Logic
   const onSubmitHandler = async (data: any) => {
-    setIsSaving(true);
-    try {
-      const formData = new FormData();
-      formData.append("companyName", data?.companyName);
-      formData.append("companyAddress", data.companyAddress);
-      formData.append("email", data?.email);
-      formData.append("aboutMe", data?.aboutMe);
-      formData.append("state", data?.state);
-      formData.append("professionalId", data?.professionalId);
-      formData.append("phoneNumber", data?.mobileNumber);
-      formData.append("role", "Admin");
-      // formData.append("password", "987654321");
+    const formData = new FormData();
+    formData.append("companyName", data?.companyName);
+    formData.append("companyAddress", data.companyAddress);
+    formData.append("email", data?.email);
+    formData.append("aboutMe", data?.aboutMe);
+    formData.append("state", data?.state);
+    formData.append("professionalId", data?.professionalId);
+    formData.append("phoneNumber", data?.mobileNumber);
+    formData.append("role", "Admin");
+    // formData.append("password", "987654321");
 
-      // Only append files if they are selected
-      if (selectedFile) {
-        formData.append("avatarImage", selectedFile);
-      }
-
-      const response = await RegisterRequest(formData);
-      toast.success(response?.message);
-      await queryClient.invalidateQueries({ queryKey: ["getUsersApi"] });
-      setShowAddTeamMate(false);
-    } catch (error: any) {
-      console.log(error.response.message, "this is the error here===");
-      toast.error(error.response?.data?.message || "An error occurred");
-    } finally {
-      setIsSaving(false);
+    // Only append files if they are selected
+    if (selectedFile) {
+      formData.append("avatarImage", selectedFile);
     }
+
+    await registerUserRequest(
+      { formData },
+      {
+        onSuccess: () => {
+          setShowAddTeamMate(false);
+        },
+        onError: () => {
+          console.log("error creating company");
+        },
+      }
+    );
   };
 
   return (

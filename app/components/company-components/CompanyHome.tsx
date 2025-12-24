@@ -1,8 +1,7 @@
 "use client";
-import { GetUserByIdRequest } from "@/app/services/request.request";
+import { useGetUserByIdRequest } from "@/app/services/request.request";
 import ReactSelect from "@/app/components/inputs/ReactSelect";
 import StudentCard from "@/app/components/cards/StudentCard";
-import { useQuery } from "@tanstack/react-query";
 import { stateData } from "@/utils/FilterData";
 import { useDebounce } from "use-debounce";
 import { useState } from "react";
@@ -17,11 +16,7 @@ export default function CompanyHome({ session }: CompanyHomeProps) {
   const [selectedState, setSelectedState] = useState("");
   const [search, setSearch] = useState("");
   const [debouncedSearch] = useDebounce(search, 500);
-
-  const { data: userData } = useQuery({
-    queryKey: ["getUserByIdApi"],
-    queryFn: () => GetUserByIdRequest(userId, token),
-  });
+  const { data: userData } = useGetUserByIdRequest(userId);
 
   return (
     <>

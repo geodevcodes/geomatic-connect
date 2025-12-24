@@ -2,11 +2,9 @@
 import { StatisticsSkeleton } from "@/app/components/skeletons/StatisticsSkeleton";
 import { StatisticsCard } from "@/app/components/cards/StatisticsCard";
 import UsersList from "@/app/components/admin-components/UsersList";
-import { GetUsersRequest } from "@/app/services/users.request";
+import { useGetUsersRequest } from "@/app/services/users.request";
 import { Sheet } from "@/app/components/sheets/Sheet";
-import { useQuery } from "@tanstack/react-query";
 import Trash from "@/app/components/trash/Trash";
-
 import { useDebounce } from "use-debounce";
 import AddCompany from "./AddCompany";
 import { Plus } from "lucide-react";
@@ -22,10 +20,11 @@ export default function AdminHome({ token }: AdminHomeProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [limit] = useState(6);
 
-  const { data: userData, isLoading } = useQuery({
-    queryKey: ["getUsersApi", currentPage, debouncedSearch],
-    queryFn: () => GetUsersRequest(token, currentPage, limit, debouncedSearch),
-  });
+  const { data: userData, isLoading } = useGetUsersRequest(
+    currentPage,
+    limit,
+    debouncedSearch
+  );
 
   return (
     <>

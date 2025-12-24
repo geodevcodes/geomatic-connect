@@ -2,8 +2,7 @@
 import { StatisticsSkeleton } from "@/app/components/skeletons/StatisticsSkeleton";
 import TransactionList from "@/app/components/admin-components/TransactionList";
 import { StatisticsCard } from "@/app/components/cards/StatisticsCard";
-import { GetAllSubscriptions } from "@/app/services/payment.request";
-import { useQuery } from "@tanstack/react-query";
+import { useGetAllSubscriptions } from "@/app/services/payment.request";
 import Trash from "@/app/components/trash/Trash";
 import { useDebounce } from "use-debounce";
 import { useState } from "react";
@@ -17,12 +16,11 @@ export default function BillingHome({ token }: BillingHomeProps) {
   const [debouncedSearch] = useDebounce(search, 500);
   const [currentPage, setCurrentPage] = useState(1);
   const [limit] = useState(6);
-
-  const { data: subscriptionData, isLoading } = useQuery({
-    queryKey: ["getSubscriptionsApi", currentPage, debouncedSearch],
-    queryFn: () =>
-      GetAllSubscriptions(currentPage, limit, token, debouncedSearch),
-  });
+  const { data: subscriptionData, isLoading } = useGetAllSubscriptions(
+    currentPage,
+    limit,
+    debouncedSearch
+  );
 
   return (
     <main className="flex min-h-screen flex-col pt-24 lg:pt-32">

@@ -1,5 +1,4 @@
 "use client";
-import { useQueryClient } from "@tanstack/react-query";
 import {
   accommodationData,
   experienceData,
@@ -7,13 +6,12 @@ import {
   stateData,
 } from "@/utils/FilterData";
 import ReactSelect from "@/app/components/inputs/ReactSelect";
-import { updateJobRequest } from "@/app/services/job.request";
+import { useUpdateJobRequest } from "@/app/services/job.request";
 import { ArrowRight, LoaderCircle, X } from "lucide-react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect, useRef, useState } from "react";
 import { formats, modules } from "@/utils/utils";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 import * as yup from "yup";
 import Quill from "quill";
 import "quill/dist/quill.snow.css";
@@ -46,7 +44,7 @@ export default function EditJob({
   token,
 }: EditJobProps) {
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
-  const queryClient = useQueryClient();
+  const { mutate: updateJobRequest } = useUpdateJobRequest();
 
   // REACT HOOK FORM LOGIC
   const {
@@ -103,26 +101,28 @@ export default function EditJob({
     setIsUpdating(true);
     const jobDescription = quillInstance.current?.root.innerHTML || "";
 
-    try {
-      const payload = {
-        jobTitle: data?.jobTitle,
-        experienceLevel: data?.experienceLevel,
-        accommodation: data?.accommodation,
-        location: data?.location,
-        jobType: data?.jobType,
-        jobDescription,
-      };
-
-      const response = await updateJobRequest(jobId, token, payload);
-      toast.success(response.message || "Job updated successfully");
-      queryClient.invalidateQueries({ queryKey: ["getJobsApi"] });
-      queryClient.invalidateQueries({ queryKey: ["getJobApi"] });
-      setShowEditJob(false);
-    } catch (error: any) {
-      toast.error(error?.response?.message);
-    } finally {
-      setIsUpdating(false);
-    }
+    const payload = {
+      jobTitle: data?.jobTitle,
+      experienceLevel: data?.experienceLevel,
+      accommodation: data?.accommodation,
+      location: data?.location,
+      jobType: data?.jobType,
+      jobDescription,
+    };
+    updateJobRequest(
+      { jobId, payload },
+      {
+        onSuccess: () => {
+          console.log("job updated successfully");
+          setShowEditJob(false);
+          setIsUpdating(false);
+        },
+        onError: () => {
+          console.log("error updating job");
+          setIsUpdating(false);
+        },
+      }
+    );
   };
 
   return (

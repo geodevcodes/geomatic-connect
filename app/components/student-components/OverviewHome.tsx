@@ -1,15 +1,13 @@
 "use client";
 import { StatisticsSkeleton } from "@/app/components/skeletons/StatisticsSkeleton";
-import { GetStudentAnalyticsRequest } from "@/app/services/analytics.request";
+import { useGetStudentAnalyticsRequest } from "@/app/services/analytics.request";
+import { useGetUserProfileRequest } from "@/app/services/users.request";
 import { OverviewCard } from "@/app/components/cards/StatisticsCard";
-import { GetUserProfileRequest } from "@/app/services/users.request";
 import LineTrendChart from "@/app/components/charts/LineTrendChart";
 import { Skeleton } from "@/app/components/skeletons/Skeleton";
 import { formatDate, formatDateShort } from "@/utils/utils";
 import { Calendar, Gift, Mail, Zap } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
 import Trash from "@/app/components/trash/Trash";
-
 import { redirect } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
@@ -21,20 +19,12 @@ interface OverviewHomeProps {
 export default function OverviewHome({ token, userId }: OverviewHomeProps) {
   const [selected, setSelected] = useState("30 Days");
   const options = ["7 Days", "14 Days", "30 Days"];
-
   const {
     data: analyticData,
     isLoading,
     isError,
-  } = useQuery({
-    queryKey: ["getStudentAnalyticsApi"],
-    queryFn: () => GetStudentAnalyticsRequest(token),
-  });
-
-  const { data: userProfileData } = useQuery({
-    queryKey: ["getUserProfileApi"],
-    queryFn: () => GetUserProfileRequest(userId, token),
-  });
+  } = useGetStudentAnalyticsRequest();
+  const { data: userProfileData } = useGetUserProfileRequest(userId as string);
 
   if (isError) {
     redirect("/login");

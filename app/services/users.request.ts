@@ -1,89 +1,76 @@
-import axios from "axios";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import axiosInstance from "./apiClient";
+import { toast } from "sonner";
 
 // GET(READ) ALL USERS REQUEST
-export const GetUsersRequest = async (
-  token: string,
-  pageNumber = 1,
+export const useGetUsersRequest = (
+  pageNumber: number = 1,
   limit: number,
   search: string
 ) => {
-  const response = await axios.get(
-    `${process.env.NEXT_PUBLIC_BASEURL}/api/users`,
-    {
-      maxBodyLength: Infinity,
-      params: { pageNumber, limit, search },
-      headers: {
-        Accept: "application/vnd.connect.v1+json",
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-  const data = await response.data;
-  return data;
+  return useQuery({
+    queryKey: ["getUsersApi", pageNumber],
+    queryFn: async () => {
+      const response = await axiosInstance.get("/api/users", {
+        params: { pageNumber, limit, search },
+      });
+      return response.data;
+    },
+  });
 };
 
 // GET USER PROFILE REQUEST
-export const GetUserProfileRequest = async (userID: string, token: string) => {
-  const response = await axios.get(
-    `${process.env.NEXT_PUBLIC_BASEURL}/api/users/profile/${userID}`,
-    {
-      maxBodyLength: Infinity,
-      headers: {
-        Accept: "application/vnd.connect.v1+json",
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-  const data = await response.data;
-  return data;
+export const useGetUserProfileRequest = (userId: string) => {
+  return useQuery({
+    queryKey: ["getUserProfileApi", userId],
+    queryFn: async () => {
+      const response = await axiosInstance.get(`/api/users/profile/${userId}`);
+      return response.data;
+    },
+    enabled: !!userId,
+  });
 };
 
 // UPDATE USER PROFILE
-
-export const UpdateUserProfileRequest = async (
-  userId: string,
-  token: string,
-  body: any
-) => {
-  try {
-    const response = await axios.put(
-      `${process.env.NEXT_PUBLIC_BASEURL}/api/users/${userId}`,
-      body,
-      {
-        headers: {
-          Accept: "application/vnd.connect.v1+json",
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    const data = response.data;
-    console.log(data);
-    if (!data) return;
-    return data;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
+export const useUpdateUserProfile = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      userId,
+      payload,
+    }: {
+      userId: string;
+      payload: any;
+    }) => {
+      const response = await axiosInstance.put(`/api/users/${userId}`, payload);
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Profile updated successfully 🎉");
+      queryClient.invalidateQueries({ queryKey: ["getAllUserDetailsApi"] });
+      queryClient.invalidateQueries({ queryKey: ["getUserProfileApi"] });
+      queryClient.invalidateQueries({ queryKey: ["getUsersApi"] });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Something went wrong");
+    },
+  });
 };
 
 // DELETE USER REQUEST
-export const DeleteUserRequest = async (userId: string, token: string) => {
-  try {
-    const response = await axios.delete(
-      `${process.env.NEXT_PUBLIC_BASEURL}/api/users/${userId}`,
-      {
-        maxBodyLength: Infinity,
-        headers: {
-          Accept: "application/vnd.connect.v1+json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    const data = response.data;
-    return data;
-  } catch (error) {
-    console.error("Error deleting user:", error);
-    throw error;
-  }
+export const useDeleteUserRequest = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ userId }: { userId: string }) => {
+      const response = await axiosInstance.delete(`/api/users/${userId}`);
+      return response.data;
+    },
+    onSuccess: (data) => {
+      toast.success(data.message || "User deleted successfully");
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Something went wrong");
+    },
+  });
 };

@@ -1,20 +1,14 @@
-import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
+import axiosInstance from "./apiClient";
 
 // GET(READ) ALL ANALYTICS REQUEST
-export const GetStudentAnalyticsRequest = async (token: string) => {
-  try {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BASEURL}/api/analytics/student`,
-      {
-        maxBodyLength: Infinity,
-        headers: {
-          Accept: "application/vnd.connect.v1+json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    return response.data;
-  } catch (error: any) {
-    throw error; 
-  }
+export const useGetStudentAnalyticsRequest = () => {
+  return useQuery({
+    queryKey: ["getStudentAnalyticsApi"],
+    queryFn: async () => {
+      const response = await axiosInstance.get("/api/analytics/student");
+      return response.data;
+    },
+    enabled: true,
+  });
 };

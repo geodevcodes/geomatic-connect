@@ -6,8 +6,10 @@ import {
   LoaderCircle,
   Share2,
 } from "lucide-react";
-import { DeleteBlogRequest, GetBlogRequest } from "@/app/services/blog.request";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useDeleteBlogRequest,
+  useGetBlogRequest,
+} from "@/app/services/blog.request";
 import { formatDateShort, getShortTitle } from "@/utils/utils";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -24,19 +26,16 @@ interface BlogDetailsProps {
 }
 
 export default function BlogDetails({ blogSlug, token }: BlogDetailsProps) {
-  const [showActions, setShowActions] = useState(false);
   const [showEditBlog, setShowEditBlog] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-  
+  const [showActions, setShowActions] = useState(false);
   const shareRef = useRef<HTMLDivElement | null>(null);
   const pathname = usePathname();
-  const queryClient = useQueryClient();
   const router = useRouter();
 
-  const { data: blogDetailData, isLoading } = useQuery({
-    queryKey: ["getSingleBlogApi"],
-    queryFn: () => GetBlogRequest(blogSlug),
-  });
+  const { mutate: deleteBlog, isPending } = useDeleteBlogRequest();
+  const { data: blogDetailData, isLoading } = useGetBlogRequest(
+    blogSlug as string
+  );
   const blogId = blogDetailData?.data?._id;
 
   // Share dropdown Handler
@@ -65,19 +64,14 @@ export default function BlogDetails({ blogSlug, token }: BlogDetailsProps) {
 
   // Delete A Blog Request Logic
   const deleteBlogHandler = async () => {
-    setIsDeleting(true);
-    try {
-      const response = await DeleteBlogRequest(blogId, token);
-      await queryClient.invalidateQueries({
-        queryKey: ["getBlogsApi"],
-      });
-      toast.success(response.message);
-    } catch (error: any) {
-      toast.error(error?.response?.data?.message);
-      toast.error(error?.message);
-    } finally {
-      setIsDeleting(false);
-    }
+    deleteBlog(blogId, {
+      onSuccess: () => {
+        console.log("blog deleted successfully");
+      },
+      onError: () => {
+        console.log("error deleting the blog");
+      },
+    });
   };
 
   return (
@@ -199,11 +193,11 @@ export default function BlogDetails({ blogSlug, token }: BlogDetailsProps) {
               {pathname.includes("/admin-dashboard") && (
                 <button
                   onClick={() => deleteBlogHandler()}
-                  disabled={isDeleting}
+                  disabled={isPending}
                   className="flex p-2 mt-8 md:p-3 justify-center items-center gap-[8px] text-white w-[120px] md:w-[150px] lg:w-[120px] cursor-pointer  px-2 py-3 font-light shadow-sm bg-gradient-to-r from-[#D92D20] to-[#F97316] rounded-sm"
                 >
                   <span className="text-[#FFFFFF] text-sm md:text-md">
-                    {isDeleting ? "Deleting...." : "Delete Blog"}
+                    {isPending ? "Deleting...." : "Delete Blog"}
                   </span>
                 </button>
               )}

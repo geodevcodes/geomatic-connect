@@ -1,108 +1,88 @@
-import axios from "axios";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import axiosInstance from "./apiClient";
+import { toast } from "sonner";
 
 // CREATE NEW BLOG REQUEST
-export const CreateBlogRequest = async (body: any) => {
-  try {
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_BASEURL}/api/blogs`,
-      body,
-      {
-        headers: {
-          Accept: "application/vnd.connect.v1+json",
-        },
-      }
-    );
-    const data = response.data;
-    console.log(data, "data is here");
-    if (!data) return;
-    return data;
-  } catch (error) {
-    console.error(error, "error occured in blogrequest====");
-    throw error;
-  }
+export const useCreateBlogRequest = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: any) => {
+      const response = await axiosInstance.post("/api/blogs", payload);
+      return response.data;
+    },
+    onSuccess: (data) => {
+      toast.success(data.message);
+      queryClient.invalidateQueries({ queryKey: ["blogs"] });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Something went wrong");
+    },
+  });
 };
 
 // GET(READ) BLOGS
-export const GetBlogsRequest = async (pageNumber = 1, limit: number) => {
-  try {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BASEURL}/api/blogs`,
-      {
-        maxBodyLength: Infinity,
+export const useGetBlogsRequest = (pageNumber: number = 1, limit: number) => {
+  return useQuery({
+    queryKey: ["blogs"],
+    queryFn: async () => {
+      const response = await axiosInstance.get("/api/blogs", {
         params: { pageNumber, limit },
-        headers: {
-          Accept: "application/vnd.connect.v1+json",
-          // Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    const data = await response.data;
-    return data;
-  } catch (error: any) {
-    console.error(error);
-    throw error;
-  }
+      });
+      return response.data;
+    },
+  });
 };
 
 // GET BLOG  REQUEST
-export const GetBlogRequest = async (blogSlug: any) => {
-  try {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BASEURL}/api/blogs/${blogSlug}`,
-      {
-        maxBodyLength: Infinity,
-        headers: {
-          Accept: "application/vnd.connect.v1+json",
-        },
-      }
-    );
-    const data = await response.data;
-    return data;
-  } catch (error: any) {
-    console.error(error);
-    throw error;
-  }
+export const useGetBlogRequest = (blogSlug: string) => {
+  return useQuery({
+    queryKey: ["blog", blogSlug],
+    queryFn: async () => {
+      const response = await axiosInstance.get(`/api/blogs/${blogSlug}`);
+      return response.data;
+    },
+    enabled: !!blogSlug,
+  });
 };
 
 // UPDATE BLOG
-export const UpdateBlogRequest = async (blogId: string, token: string, body: any) => {
-  try {
-    const response = await axios.put(
-      `${process.env.NEXT_PUBLIC_BASEURL}/api/blogs/${blogId}`,
-      body,
-      {
-        headers: {
-          Accept: "application/vnd.connect.v1+json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    const data = response.data;
-    console.log(data);
-    if (!data) return;
-    return data;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
+export const useUpdateBlogRequest = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      blogId,
+      payload,
+    }: {
+      blogId: string;
+      payload: any;
+    }) => {
+      const response = await axiosInstance.put(`/api/blogs/${blogId}`, payload);
+      return response.data;
+    },
+    onSuccess: (data) => {
+      toast.success(data.message || "Blog updated successfully");
+      queryClient.invalidateQueries({ queryKey: ["blog"] });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Something went wrong");
+    },
+  });
 };
 
 // DELETE  BLOG  REQUEST
-export const DeleteBlogRequest = async (blogId: string, token: string) => {
-  try {
-    const response = await axios.delete(
-      `${process.env.NEXT_PUBLIC_BASEURL}/api/blogs/${blogId}`,
-      {
-        maxBodyLength: Infinity,
-        headers: {
-          Accept: "application/vnd.connect.v1+json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    const data = response.data;
-    return data;
-  } catch (error) {
-    throw error;
-  }
+export const useDeleteBlogRequest = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ blogId }: { blogId: string }) => {
+      const response = await axiosInstance.delete(`/api/blogs/${blogId}`);
+      return response.data;
+    },
+    onSuccess: (data) => {
+      toast.success(data.message || "Blog deleted successfully");
+      queryClient.invalidateQueries({ queryKey: ["blog"] });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Something went wrong");
+    },
+  });
 };

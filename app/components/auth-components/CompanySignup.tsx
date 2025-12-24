@@ -1,18 +1,14 @@
 "use client";
 import { useState } from "react";
 import { BiHide, BiShow } from "react-icons/bi";
-import { toast, ToastContainer } from "react-toastify";
-
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { RegisterRequest } from "@/app/services/auth.request";
+import { useRegisterRequest } from "@/app/services/auth.request";
 import ReactSelect from "@/app/components/inputs/ReactSelect";
 import { stateData } from "@/utils/FilterData";
-import { Resend } from "resend";
-// import WelcomeTemplate from "@/emails";
 
 const schema = yup.object().shape({
   companyName: yup.string().required("Company Name is required"),
@@ -33,8 +29,8 @@ const schema = yup.object().shape({
 export default function CompanySignup() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const resend = new Resend(process.env.NEXT_PUBLIC_RESEND_API_KEY);
+  const { mutateAsync: registerUserRequest, isPending: isSaving } =
+    useRegisterRequest();
 
   const {
     register,
@@ -46,8 +42,7 @@ export default function CompanySignup() {
 
   //Register User submission Logic
   const onSubmitHandler = async (data: any) => {
-    setIsSaving(true);
-    const body = {
+    const formData = {
       companyName: data?.companyName,
       companyAddress: data?.companyAddress,
       email: data?.email,
@@ -56,31 +51,19 @@ export default function CompanySignup() {
       professionalId: data?.professionalId,
       role: "Company",
     };
-    // const firstName = data?.companyName;
-    // const email = data?.email;
-    try {
-      try {
-        // const emailResponse = await resend.emails.send({
-        //   from: "Geomatic Connect <onboarding@resend.dev>",
-        //   to: [email],
-        //   subject: "Welcome to Geomatic Connect",
-        //   react: WelcomeTemplate({ firstName }),
-        // });
-        // console.log("Email sent:", emailResponse);
-        const response = await RegisterRequest(body);
-        toast.success(response?.message);
-        setTimeout(() => {
-          router.push("/verify-email");
-        }, 5000);
-      } catch (emailError: any) {
-        console.error("Error sending email:", emailError);
-        toast.error("Failed to send welcome email.");
+    await registerUserRequest(
+      { formData },
+      {
+        onSuccess: () => {
+          setTimeout(() => {
+            router.push("/verify-email");
+          }, 5000);
+        },
+        onError: () => {
+          console.log("error creating user");
+        },
       }
-    } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Registration failed.");
-    } finally {
-      setIsSaving(false);
-    }
+    );
   };
   return (
     <>
