@@ -6,10 +6,8 @@ import { useGetAllNotifications } from "@/app/services/request.request";
 import Trash from "@/app/components/trash/Trash";
 import { useState } from "react";
 
-interface RequestsHomeProps {
-  token: string;
-}
-export default function RequestsHome({ token }: RequestsHomeProps) {
+
+export default function RequestsHome() {
   const [currentPage, setCurrentPage] = useState(1);
   const [limit] = useState(6);
   const { data: notificationsData, isLoading } = useGetAllNotifications(
@@ -62,7 +60,6 @@ export default function RequestsHome({ token }: RequestsHomeProps) {
           )}
 
           <RequestsList
-            token={token}
             notificationsData={notificationsData}
             isLoading={isLoading}
             setCurrentPage={setCurrentPage}

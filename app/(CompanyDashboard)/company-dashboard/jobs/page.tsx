@@ -11,8 +11,7 @@ export const metadata: Metadata = {
 export default async function JobPage() {
   const session = await auth();
   const token = session?.user?.token;
-  const userId = session?.user?._id;
-  if (!session?.user || !token || !userId) {
+  if (!token) {
     redirect("/login");
   }
   return (

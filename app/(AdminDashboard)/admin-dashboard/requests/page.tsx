@@ -11,12 +11,12 @@ export const metadata: Metadata = {
 export default async function RequestsPage() {
   const session = await auth();
   const token = session?.user?.token;
-  if (!session?.user || !token) {
+  if (!token) {
     redirect("/login");
   }
   return (
     <div>
-      <RequestsHome token={token} />
+      <RequestsHome />
     </div>
   );
 }
