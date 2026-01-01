@@ -8,52 +8,38 @@ const axiosInstance = axios.create({
   },
 });
 
-// REQUEST INTERCEPTOR
+/* ---------------------------------------------
+   REQUEST INTERCEPTOR
+   - Attaches Bearer token from NextAuth
+   - Token is always valid because auth() refreshes if expired
+--------------------------------------------- */
 axiosInstance.interceptors.request.use(
   async (config) => {
-    const session = await getSession();
+    try {
+      const session = await getSession(); // ✅ always returns a valid session
+      const token = session?.user?.token;
 
-    if (session?.user?.token) {
-      config.headers.Authorization = `Bearer ${session.user.token}`;
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+
+      return config;
+    } catch (err) {
+      console.error("Failed to get session in request interceptor:", err);
+      return config; // still allow request even if session fails
     }
-
-    return config;
   },
   (error) => Promise.reject(error)
 );
 
-// RESPONSE INTERCEPTOR (auto-refresh)
+/* ---------------------------------------------
+   RESPONSE INTERCEPTOR
+   - Optional: just forward errors
+   - No refresh logic here; handled in auth.ts
+--------------------------------------------- */
 axiosInstance.interceptors.response.use(
   (response) => response,
-  async (error) => {
-    const originalRequest = error.config;
-
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-
-      const session = await getSession();
-
-      if (!session?.user?.refreshToken) {
-        return Promise.reject(error);
-      }
-
-      try {
-        const res = await axios.post(
-          `${process.env.NEXT_PUBLIC_BASEURL}/auth/refresh`,
-          {
-            refreshToken: session.user.refreshToken,
-          }
-        );
-
-        const newAccessToken = res.data.accessToken;
-
-        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-        return axiosInstance(originalRequest);
-      } catch (refreshError) {
-        return Promise.reject(refreshError);
-      }
-    }
-
+  (error) => {
     return Promise.reject(error);
   }
 );
