@@ -12,7 +12,6 @@ import { toast } from "sonner";
 import { LoaderCircle, Upload } from "lucide-react";
 
 interface SettingsProps {
-  token: string;
   userId: string;
 }
 
@@ -35,7 +34,7 @@ const schema = yup.object().shape({
     .min(3, " must be greater than 8 letters"),
 });
 
-export default function Settings({ token, userId }: SettingsProps) {
+export default function Settings({ userId }: SettingsProps) {
   const [userImage, setUserImage] = useState<string | undefined>(undefined);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const { data: userProfileData } = useGetUserProfileRequest(userId as string);

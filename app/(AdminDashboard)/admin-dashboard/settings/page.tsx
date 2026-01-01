@@ -18,7 +18,7 @@ export default async function SettingsPage() {
 
   return (
     <main className="min-h-screen pt-24 xl:p-2 lg:pt-32 xl:pt-32 font-sans text-md">
-      <Settings token={token} userId={userId} />
+      <Settings userId={userId} />
     </main>
   );
 }

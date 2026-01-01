@@ -14,7 +14,6 @@ import { Sheet } from "@/app/components/sheets/Sheet";
 import AddTeamMate from "./AddTeamMate";
 
 interface SettingsProps {
-  token: string;
   userId: string;
 }
 
@@ -33,7 +32,7 @@ const schema = yup.object().shape({
     .min(3, " must be greater than 8 letters"),
 });
 
-export default function Settings({ token, userId }: SettingsProps) {
+export default function Settings({ userId }: SettingsProps) {
   const [showAddTeamMate, setShowAddTeamMate] = useState(false);
   const [userImage, setUserImage] = useState<string | undefined>(undefined);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);

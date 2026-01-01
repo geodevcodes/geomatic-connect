@@ -1,7 +1,7 @@
-import type { Metadata } from "next";
-import { auth } from "@/auth";
 import Settings from "@/app/components/company-components/Settings";
 import { redirect } from "next/navigation";
+import type { Metadata } from "next";
+import { auth } from "@/auth";
 
 export const metadata: Metadata = {
   title: "Settings | Geomatic Connect",
@@ -23,7 +23,7 @@ export default async function SettingsPage() {
         <p className="text-gray-500">Manage the settings of your account</p>
       </div>
       <section className="h-fit border mt-8 p-6 rounded-md">
-        <Settings token={token} userId={userId} />
+        <Settings userId={userId} />
       </section>
     </main>
   );

@@ -33,6 +33,7 @@ export default function StudentNavBar({ session }: { session: any }) {
     currentPage,
     limit
   );
+  console.log(userData, "this is user data in navbar");
 
   // Handle click outside of dropdown to close it
   useEffect(() => {
@@ -158,8 +159,8 @@ export default function StudentNavBar({ session }: { session: any }) {
                   <div className="relative cursor-pointer">
                     <Image
                       src={
-                        userData?.avatarImage
-                          ? userData.avatarImage
+                        userData?.data?.avatarImage
+                          ? userData?.data?.avatarImage
                           : avatarPlaceholderUrlTwo
                       }
                       alt="user avatar pics"

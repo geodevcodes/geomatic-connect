@@ -116,8 +116,8 @@ export default function AdminNavBar({ session }: { session: any }) {
                   <div className="relative cursor-pointer">
                     <Image
                       src={
-                        userData?.avatarImage
-                          ? userData.avatarImage
+                        userData?.data?.avatarImage
+                          ? userData?.data?.avatarImage
                           : avatarPlaceholderUrlOne
                       }
                       alt="Geomatic avatar pics"

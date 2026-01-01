@@ -23,7 +23,7 @@ export default async function SettingsPage() {
         <p className="text-gray-500">Manage the settings of your account</p>
       </div>
       <section className="h-fit border mt-8 p-6 rounded-md">
-        <Settings token={token} userId={userId} />
+        <Settings userId={userId} />
       </section>
     </main>
   );

@@ -16,7 +16,6 @@ import { Modal } from "@/app/components/modals/Modal";
 import { toast } from "sonner";
 
 interface SettingsProps {
-  token: string;
   userId: string;
 }
 
@@ -44,7 +43,7 @@ const schema = yup.object().shape({
   state: yup.string().required("State is required"),
 });
 
-export default function Settings({ token, userId }: SettingsProps) {
+export default function Settings({ userId }: SettingsProps) {
   const [userImage, setUserImage] = useState<string | undefined>(undefined);
   const [userDocument, setUserDocument] = useState<string | undefined>(
     undefined

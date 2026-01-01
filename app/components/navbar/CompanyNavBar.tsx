@@ -159,8 +159,8 @@ export default function CompanyNavBar({ session }: { session: any }) {
                   <div className="relative cursor-pointer">
                     <Image
                       src={
-                        userData?.avatarImage
-                          ? userData.avatarImage
+                        userData?.data?.avatarImage
+                          ? userData?.data?.avatarImage
                           : avatarPlaceholderUrlThree
                       }
                       alt="Company avatar pics"
