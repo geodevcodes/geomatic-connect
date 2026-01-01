@@ -28,7 +28,7 @@ export default async function SubscribePage() {
         </p>
       </div>
       <section className="h-fit border mt-8 p-6 rounded-md">
-        <Subscribe token={token} userId={userId} />
+        <Subscribe userId={userId} />
       </section>
     </main>
   );

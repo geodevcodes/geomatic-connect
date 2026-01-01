@@ -14,15 +14,13 @@ interface StudentHomeProps {
 
 export default function StudentHome({ session }: StudentHomeProps) {
   const userId = session?.user?._id;
-  const token = session.user.token;
   const [showSendRequest, setShowSendRequest] = useState<boolean>(false);
   const [selectedState, setSelectedState] = useState("");
   const [selectedCompanyId, setSelectedCompanyId] = useState("");
   const [showSubscribe, setShowSubscribe] = useState<boolean>(false);
   const [search, setSearch] = useState("");
   const [debouncedSearch] = useDebounce(search, 500);
-  const { data: userData } = useGetUserByIdRequest(userId);
-
+  const { data: userData } = useGetUserByIdRequest(userId);  
   return (
     <>
       {/* ====== Filter & Search Goes here ====== */}
@@ -55,7 +53,6 @@ export default function StudentHome({ session }: StudentHomeProps) {
       {/* ====CARD GOES HERE ===== */}
       <div>
         <CompanyCard
-          token={token}
           setSelectedCompanyId={setSelectedCompanyId}
           selectedCompanyId={selectedCompanyId}
           showSendRequest={showSendRequest}

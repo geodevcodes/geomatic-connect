@@ -17,7 +17,6 @@ import { toast } from "sonner";
 import Image from "next/image";
 
 interface StudentCardProps {
-  token: string;
   companyId: string;
   selectedState: string;
   search: string;
@@ -29,7 +28,6 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 ).toString();
 
 export default function StudentCard({
-  token,
   companyId,
   selectedState,
   search,
@@ -61,19 +59,14 @@ export default function StudentCard({
     const payload = {
       requestId: requestId,
     };
-    companyApproveStudentRequest(
-      {
-        payload,
+    companyApproveStudentRequest(payload, {
+      onSuccess: () => {
+        console.log("request approved successfully");
       },
-      {
-        onSuccess: () => {
-          console.log("request approved successfully");
-        },
-        onError: () => {
-          console.log("error creating request");
-        },
-      }
-    );
+      onError: () => {
+        console.log("error creating request");
+      },
+    });
   };
 
   // Send Decline Request to Admin Logic
@@ -81,19 +74,14 @@ export default function StudentCard({
     const payload = {
       requestId: requestId,
     };
-    companyDeclineStudentRequest(
-      {
-        payload,
+    companyDeclineStudentRequest(payload, {
+      onSuccess: () => {
+        console.log("request approved successfully");
       },
-      {
-        onSuccess: () => {
-          console.log("request approved successfully");
-        },
-        onError: () => {
-          console.log("error creating request");
-        },
-      }
-    );
+      onError: () => {
+        console.log("error creating request");
+      },
+    });
   };
 
   return (

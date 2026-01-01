@@ -5,7 +5,7 @@ import { toast } from "sonner";
 // ACCEPT PAYMENT REQUEST
 export const useAcceptPaymentRequest = () => {
   return useMutation({
-    mutationFn: async (payload: any) => {
+    mutationFn: async ({ payload }: { payload: any }) => {
       const response = await axiosInstance.post("/api/acceptpayment", payload);
       return response.data;
     },
@@ -24,7 +24,7 @@ export const VerifyPaymentRequest = async (
   subscriptionPlan: any
 ) => {
   const response = await axiosInstance.get(
-    `/api/verifypayment/${reference}?subscriptionPlan=${subscriptionPlan}`,
+    `/api/verifypayment/${reference}?subscriptionPlan=${subscriptionPlan}`
   );
   const data = await response.data;
   return data;

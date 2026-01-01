@@ -90,9 +90,8 @@ export default function Settings({ userId }: SettingsProps) {
       formData.append("avatarImage", selectedFile);
     }
 
-    const payload = { formData };
     updateUserRequest(
-      { userId, payload },
+      { userId, formData },
       {
         onSuccess: () => {
           console.log("profile updated successfully");

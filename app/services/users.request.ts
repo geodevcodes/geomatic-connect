@@ -34,15 +34,24 @@ export const useGetUserProfileRequest = (userId: string) => {
 // UPDATE USER PROFILE
 export const useUpdateUserProfile = () => {
   const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async ({
       userId,
-      payload,
+      formData,
     }: {
       userId: string;
-      payload: any;
+      formData: FormData;
     }) => {
-      const response = await axiosInstance.put(`/api/users/${userId}`, payload);
+      const response = await axiosInstance.put(
+        `/api/users/${userId}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data", // let Axios handle the boundary
+          },
+        }
+      );
       return response.data;
     },
     onSuccess: () => {

@@ -166,7 +166,6 @@ export default function StudentDetails({
           setShowSendRequest={setShowSendRequest}
           companyId={companyId}
           userData={userProfileData}
-          token={token}
         />
       </Sheet>
     </>

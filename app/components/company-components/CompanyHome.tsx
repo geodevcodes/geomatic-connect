@@ -12,7 +12,6 @@ interface CompanyHomeProps {
 
 export default function CompanyHome({ session }: CompanyHomeProps) {
   const userId = session?.user?._id;
-  const token = session.user.token;
   const [selectedState, setSelectedState] = useState("");
   const [search, setSearch] = useState("");
   const [debouncedSearch] = useDebounce(search, 500);
@@ -50,7 +49,6 @@ export default function CompanyHome({ session }: CompanyHomeProps) {
       {/* ====CARD GOES HERE ===== */}
       <div>
         <StudentCard
-          token={token}
           companyId={userData?.data?._id}
           search={debouncedSearch}
           selectedState={selectedState}

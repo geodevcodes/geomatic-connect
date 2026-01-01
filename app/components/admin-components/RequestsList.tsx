@@ -446,7 +446,6 @@ RequestsListProps) {
       {/* === MODALS === */}
       <Modal show={showSendRequest} onClose={() => setShowSendRequest(false)}>
         <SendRequest
-          token={token}
           setShowSendRequest={setShowSendRequest}
           notificationsData={notificationsData?.data}
           notificationID={selectedRow ? selectedRow._id : null}

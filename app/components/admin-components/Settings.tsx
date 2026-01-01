@@ -90,10 +90,9 @@ export default function Settings({ userId }: SettingsProps) {
     if (selectedDocument) {
       formData.append("documentFile", selectedDocument);
     }
-    const payload = { formData };
 
     updateUserRequest(
-      { userId, payload },
+      { userId, formData },
       {
         onSuccess: () => {
           console.log("profile updated successfully");

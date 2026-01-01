@@ -139,9 +139,8 @@ export default function Settings({ userId }: SettingsProps) {
       formData.append("documentFile", selectedDocument);
     }
 
-    const payload = { formData };
     updateUserRequest(
-      { userId, payload },
+      { userId, formData },
       {
         onSuccess: () => {
           console.log("profile updated successfully");

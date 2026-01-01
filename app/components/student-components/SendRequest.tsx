@@ -19,7 +19,6 @@ interface SendRequestProps {
   setShowSendRequest?: any;
   userData: any;
   companyId?: any;
-  token?: any;
   selectedCompanyId?: any;
 }
 
@@ -51,7 +50,6 @@ export default function SendRequest({
   setShowSendRequest,
   userData,
   companyId,
-  token,
   selectedCompanyId,
 }: SendRequestProps) {
   const [showSuccessMessage, setShowSuccessMessage] = useState<boolean>(false);
@@ -103,9 +101,7 @@ export default function SendRequest({
       backgroundHistory: data?.backgroundHistory,
     };
     studentSendRequestToAdmin(
-      {
-        payload,
-      },
+      payload,
       {
         onSuccess: (data) => {
           setResponseData(data);

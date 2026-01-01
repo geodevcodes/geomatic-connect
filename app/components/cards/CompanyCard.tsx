@@ -10,7 +10,6 @@ import Image from "next/image";
 import Link from "next/link";
 
 interface CompanyCardProps {
-  token: string;
   setSelectedCompanyId?: any;
   selectedCompanyId?: any;
   showSendRequest?: any;
@@ -21,7 +20,6 @@ interface CompanyCardProps {
 }
 
 export default function CompanyCard({
-  token,
   setSelectedCompanyId,
   selectedCompanyId,
   showSendRequest,
@@ -172,7 +170,6 @@ export default function CompanyCard({
         <SendRequest
           setShowSendRequest={setShowSendRequest}
           userData={userData}
-          token={token}
           selectedCompanyId={selectedCompanyId}
         />
       </Sheet>

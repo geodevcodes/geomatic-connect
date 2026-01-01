@@ -6,7 +6,6 @@ import { toast } from "sonner";
 import Image from "next/image";
 
 interface RequestDetailsProps {
-  token?: any;
   setShowSendRequest?: any;
   notificationsData?: any;
   notificationID?: any;
@@ -15,7 +14,6 @@ interface RequestDetailsProps {
 }
 
 export default function RequestDetails({
-  token,
   setShowSendRequest,
   notificationsData,
   notificationID,

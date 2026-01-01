@@ -11,13 +11,12 @@ import {
 import { toast } from "sonner";
 
 interface SubscribeProps {
-  token: string;
   userId: string;
   setSelectedBillingCycleTab?: any;
   selectedBillingCycleTab?: any;
 }
 
-export default function Subscribe({ token, userId }: SubscribeProps) {
+export default function Subscribe({ userId }: SubscribeProps) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [selectedBillingCycleTab, setSelectedBillingCycleTab] =
     useState("Monthly");
@@ -89,21 +88,26 @@ export default function Subscribe({ token, userId }: SubscribeProps) {
       metadata: { subscriptionPlan: planMethod },
     };
 
-    acceptPayment(payload, {
-      onSuccess: (data) => {
-        setIsProcessing(false);
-        if (data?.authorization_url) {
-          localStorage.setItem("paymentReference", data.reference);
-          localStorage.setItem("subscriptionPlan", planMethod);
-          window.location.href = data.authorization_url;
-        } else {
-          toast.error("Unable to initialize payment");
-        }
-      },
-      onError: () => {
-        setIsProcessing(false);
-      },
-    });
+    acceptPayment(
+      { payload },
+      {
+        onSuccess: (data) => {
+          setIsProcessing(false);
+          const authUrl = data?.data?.authorization_url;
+          const reference = data?.data?.reference;
+          if (authUrl && reference) {
+            localStorage.setItem("paymentReference", reference);
+            localStorage.setItem("subscriptionPlan", planMethod);
+            window.location.href = authUrl;
+          } else {
+            toast.error("Unable to initialize payment");
+          }
+        },
+        onError: () => {
+          setIsProcessing(false);
+        },
+      }
+    );
   };
 
   // verifyPaymentAfterRedirect when page reloads or on mount

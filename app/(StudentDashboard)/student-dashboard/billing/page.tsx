@@ -27,7 +27,7 @@ export default async function BillingPage() {
         </p>
       </div>
       <section className="h-fit border mt-8 p-6 rounded-md">
-        <Billing token={token} userId={userId} />
+        <Billing userId={userId} />
       </section>
     </main>
   );
