@@ -163,9 +163,8 @@ export default function UsersDetails({ token, userId }: UsersDetailsProps) {
     appendIfExists(formData, "accomodation", data.accomodation);
     if (selectedFile) formData.append("avatarImage", selectedFile);
 
-    const payload = { formData };
     updateUserRequest(
-      { userId, payload },
+      { userId, formData },
       {
         onSuccess: () => {
           console.log("profile updated successfully");
