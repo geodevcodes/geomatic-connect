@@ -37,9 +37,7 @@ export default function RequestDetails({
       requestId: notification?._id,
     };
     adminSendRequestToCompany(
-      {
-        payload,
-      },
+      payload,
       {
         onSuccess: (data) => {
           setResponseData(data);
@@ -144,7 +142,7 @@ export default function RequestDetails({
               </div>
             </section>
 
-            <section className="md:grid md:grid-cols-2 gap-3">
+            <section className="md:grid md:grid-cols-1 gap-3">
               {/* === Institution Name === */}
               <div>
                 <span className="text-sm text-gray-500 font-normal">
@@ -153,18 +151,6 @@ export default function RequestDetails({
                 <div className="flex flex-col w-full pt-2 px-4 pb-1 rounded-md bg-gray-100 border-[1.3px] border-slate-300">
                   <p className="py-2 focus:outline-none placeholder:text-sm custom-placeholder bg-transparent text-black">
                     {notification?.institutionName}
-                  </p>
-                </div>
-              </div>
-
-              {/* === Level of Education === */}
-              <div>
-                <span className="text-sm text-gray-500 font-normal">
-                  Level of Education
-                </span>
-                <div className="flex flex-col w-full pt-2 px-4 pb-1 rounded-md bg-gray-100 border-[1.3px] border-slate-300">
-                  <p className="py-2 focus:outline-none placeholder:text-sm custom-placeholder bg-transparent text-black">
-                    {notification?.educationLevel}
                   </p>
                 </div>
               </div>

@@ -26,14 +26,13 @@ interface notificationsData {
   studentId: { fullName: string } | null;
   companyId: { companyName: string } | null;
   educationLevel: string;
-  trackPeriod: string;
+  requestPurpose: string;
   institutionName: string;
   status: string;
   action: string;
 }
 
 interface RequestsListProps {
-  token?: any;
   notificationsData?: any;
   isLoading?: boolean;
   setCurrentPage?: React.Dispatch<React.SetStateAction<number>>;
@@ -66,7 +65,6 @@ interface TableType {
 }
 
 export default function RequestsList({
-  token,
   notificationsData,
   isLoading,
   setCurrentPage,
@@ -87,10 +85,6 @@ RequestsListProps) {
   const [selectedRequestId, setSelectedRequestId] = useState<
     string | undefined
   >();
-
-  // React TanStank Query Invalidate Logic
-  const queryClient = useQueryClient();
-  console.log(notificationsData, "this is notificationsData here=====");
 
   const { mutate: adminApproveStudentRequest } =
     useAdminApproveStudentRequest();
@@ -263,17 +257,16 @@ RequestsListProps) {
         </span>
       ),
     }),
-    columnHelper.accessor("educationLevel", {
+    columnHelper.accessor("requestPurpose", {
       cell: (info) => (
         <span>
-          {info?.row?.original?.educationLevel ||
-            info?.row?.original?.trackPeriod}
+          {info?.row?.original?.requestPurpose ||
+            info?.row?.original?.requestPurpose}
         </span>
       ),
       header: () => (
         <span className="flex items-center text-[#101828] dark:text-accent-foreground">
-          Education Level
-          <ArrowDown size={18} className="ml-2" />
+          Purpose of Request
         </span>
       ),
     }),

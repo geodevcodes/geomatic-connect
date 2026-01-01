@@ -35,7 +35,8 @@ export default function Logout({ setShowLogOut }: LogoutProps) {
             "bg-[#D92D20] hover:bg-[#D92D20]/90 rounded-[8px] text-white px-[28px] cursor-pointer py-[12px] text-center  w-1/2 lg:w-[230px] whitespace-nowrap"
           }
           onClick={() => {
-            setIsLoggingOut(true), signOut();
+            setIsLoggingOut(true);
+            signOut();
           }}
           disabled={isLoggingOut}
         >
