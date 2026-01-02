@@ -71,8 +71,7 @@ export default function VerifyEmail({ userEmail }: VerifyEmailProps) {
       verifyUserEmail(
         { payload },
         {
-          onSuccess: (data) => {
-            toast.success(data?.message);
+          onSuccess: () => {
             setTimeout(() => {
               router.push("/login");
             }, 5000);

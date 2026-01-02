@@ -1,15 +1,16 @@
 "use client";
-import Image from "next/image";
-import { useState } from "react";
-import Link from "next/link";
-import { BiHide, BiShow } from "react-icons/bi";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import { getSession, signIn } from "next-auth/react";
+import { useLoginRequest } from "@/app/services/auth.request";
 import GoogleImage from "@/public/images/google.png";
 import GithubImage from "@/public/images/github.png";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { BiHide, BiShow } from "react-icons/bi";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { signIn } from "next-auth/react";
+import { useState } from "react";
+import { toast } from "sonner";
+import Image from "next/image";
+import Link from "next/link";
 import * as yup from "yup";
 
 const schema = yup.object().shape({
@@ -25,9 +26,9 @@ const schema = yup.object().shape({
 });
 
 export default function LoginHome() {
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
+  const { mutateAsync: loginMutation, isPending } = useLoginRequest();
   const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
 
   // REACT HOOK FORM LOGIC
   const {
@@ -38,34 +39,24 @@ export default function LoginHome() {
 
   // Handle Login Form Submission LOGIC
   const onSubmitHandler = async (params: any) => {
-    setIsLoading(true);
-    const response = await signIn("credentials", {
-      email: params.email,
-      password: params.password,
-      redirect: false,
-      callbackUrl: "/redirect",
-    });
-
-    // Error Handling
-    if (response?.error || response?.status === 401) {
-      toast.error("Invalid Email/Password");
-      setIsLoading(false);
-      return;
-    }
-    setIsLoading(false);
-    const session = await getSession();
-
-    if (session?.user?.token) {
-      router.push(response?.url || "/redirect");
-    } else {
-      setTimeout(async () => {
-        const refreshedSession = await getSession();
-        if (refreshedSession?.user?.token) {
-          router.push("/redirect");
-        } else {
-          toast.error("Session not available");
-        }
-      }, 1000);
+    if (isPending) return;
+    try {
+      await loginMutation({
+        email: params.email,
+        password: params.password,
+      });
+      const response = await signIn("credentials", {
+        email: params.email,
+        password: params.password,
+        redirect: false,
+      });
+      if (response?.error) {
+        toast.error("Failed to start session");
+        return;
+      }
+      router.push("/redirect");
+    } catch (error) {
+      console.error("Login error:", error);
     }
   };
 
@@ -76,9 +67,11 @@ export default function LoginHome() {
           <p className="text-center text-[24px] ">Welcome Back!</p>
           <p className="text-center">Login to your account</p>
 
-          {/* ======= Google Authentication container ====== */}
+          {/* ======= Google Authentication ====== */}
           <div
-            onClick={() => signIn("google", { callbackUrl: "/redirect" })}
+            onClick={() =>
+              !isPending && signIn("google", { callbackUrl: "/redirect" })
+            }
             className="mt-4 py-1 rounded-lg flex items-center justify-center cursor-pointer bg-white text-black font-medium"
           >
             <div>
@@ -94,9 +87,10 @@ export default function LoginHome() {
             <p className="py-1 ml-4">Continue with Google</p>
           </div>
 
-          {/* ======= Github Authentication container ====== */}
+          {/* ======= Github Authentication ====== */}
           <div
             onClick={() =>
+              !isPending &&
               signIn("github", {
                 callbackUrl: "/redirect",
                 redirect: true,
@@ -184,10 +178,10 @@ export default function LoginHome() {
             </Link>
 
             <button
-              disabled={isLoading}
+              disabled={isPending}
               className="px-8 py-2 cursor-pointer  mt-4 bg-[#1F4D36] text-[16px] text-white rounded-lg w-full  transition duration-500 ease-in-out hover:shadow-[0_0_20px_rgba(31,77,54,0.7)] hover:brightness-150"
             >
-              {isLoading ? "Authenticating...." : "Continue"}
+              {isPending ? "Authenticating...." : "Continue"}
             </button>
           </form>
 

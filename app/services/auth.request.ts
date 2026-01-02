@@ -82,6 +82,32 @@ export const useResendVerifyOTPRequest = () => {
   });
 };
 
+// LOGIN REQUEST
+export const useLoginRequest = () => {
+  return useMutation({
+    mutationFn: async (payload: { email: string; password: string }) => {
+      const response = await axiosInstance.post("/auth/login", payload);
+      return response.data;
+    },
+    onSuccess: (data) => {
+      return data;
+    },
+
+    onError: (error: any) => {
+      if (!error.response) {
+        toast.error("Network error. Please try again.");
+        return;
+      }
+
+      if (error.response.status === 500) {
+        toast.error("Internal Server Error");
+        return;
+      }
+      toast.error(error.response.data?.message || "Login failed");
+    },
+  });
+};
+
 // FORGOT PASSWORD REQUEST
 export const useForgotPasswordRequest = () => {
   return useMutation({
