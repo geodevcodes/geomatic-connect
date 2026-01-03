@@ -11,7 +11,6 @@ export function AdminSidebar() {
   const [showSignOutProfile, setShowSignOutProfile] = useState(false);
   const pathname = usePathname();
   const addSignOutProfileRef = useRef(null);
-  console.log(pathname);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -76,9 +75,9 @@ export function AdminSidebar() {
               ref={addSignOutProfileRef}
               className={`${
                 showSignOutProfile === true ? "block" : "hidden"
-              }  bg-white h-fit absolute left-48 bottom-36 border-[1.3px] border-gray-400 w-[200px] rounded-lg mt-2 py-3 shadow-[rgba(13,_38,_76,_0.19)_0px_9px_20px] space-y-2 text-[#24252D]`}
+              }  bg-white dark:bg-background h-fit absolute left-48 bottom-36 border-[1.3px] border-gray-400 dark:border-muted w-[200px] rounded-lg mt-2 py-3 shadow-[rgba(13,_38,_76,_0.19)_0px_9px_20px] space-y-2 text-[#24252D]`}
             >
-              <div className="flex items-center space-x-4 hover:bg-gray-100 p-2 pr-3 cursor-pointer">
+              <div className="flex items-center space-x-4 dark:text-accent-foreground hover:bg-gray-100 dark:hover:bg-accent p-2 pr-3 cursor-pointer">
                 <Settings size={16} />
                 <Link className="block" href="/admin-dashboard/settings">
                   Settings
@@ -86,7 +85,7 @@ export function AdminSidebar() {
               </div>
               <div
                 onClick={() => signOut()}
-                className="flex items-center space-x-4 hover:bg-gray-100 p-2 pr-3 cursor-pointer"
+                className="flex items-center space-x-4 hover:bg-gray-100 dark:hover:bg-accent text-red-600 p-2 pr-3 cursor-pointer"
               >
                 <LogOut size={16} />
                 <p>Log out</p>
