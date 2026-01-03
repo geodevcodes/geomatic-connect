@@ -1,6 +1,6 @@
 import BlogDetails from "@/app/components/admin-components/BlogDetails";
-import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import { auth } from "@/auth";
 
 export default async function BlogDetailsPage({ params }: { params: any }) {
   const session = await auth();
@@ -13,7 +13,7 @@ export default async function BlogDetailsPage({ params }: { params: any }) {
   return (
     <>
       <main className="min-h-screen lg:p-12 xl:p-20 xl:px-2">
-        <BlogDetails blogSlug={blogSlug} token={token} />
+        <BlogDetails blogSlug={blogSlug} />
       </main>
     </>
   );
