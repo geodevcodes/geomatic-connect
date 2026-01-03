@@ -133,7 +133,7 @@ export function AIGenerateBlog({
         <button
           onClick={handleGenerate}
           disabled={isLoading}
-          className="flex items-center justify-center px-4 py-2 font-light shadow-sm bg-gradient-to-r from-[#49AD51] to-[#B1D045] text-white rounded"
+          className="flex items-center justify-center px-4 py-2 font-light shadow-sm bg-gradient-to-r from-[#49AD51] to-[#B1D045] dark:bg-muted dark:bg-gradient-to-r dark:from-muted dark:to-muted-foreground text-white rounded"
         >
           {isLoading ? (
             <>
