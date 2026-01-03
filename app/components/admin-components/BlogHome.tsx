@@ -8,10 +8,7 @@ import CreateBlog from "./CreateBlog";
 import { useState } from "react";
 import Link from "next/link";
 
-interface BlogHomeProps {
-  token: any;
-}
-export default function BlogHome({ token }: BlogHomeProps) {
+export default function BlogHome() {
   const [showCreateBlog, setShowCreateBlog] = useState(false);
   const skeletonArray = [1, 2, 3, 4, 5, 6];
   const [currentPage, setCurrentPage] = useState(1);
@@ -48,7 +45,7 @@ export default function BlogHome({ token }: BlogHomeProps) {
           </div>
 
           {showCreateBlog ? (
-            <div className="mt-8 rounded-2xl bg-white border border-slate-200">
+            <div className="mt-8 rounded-2xl border border-slate-200 dark:border-background bg-white dark:bg-muted">
               <CreateBlog setShowCreateBlog={setShowCreateBlog} />
             </div>
           ) : (

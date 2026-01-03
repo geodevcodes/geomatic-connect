@@ -261,8 +261,8 @@ export default function CreateBlog({
       <div>
         <div className="grid grid-cols-1 md:grid-cols-2 py-4 px-3 gap-4">
           {/* ========Blog Editor======== */}
-          <div className="w-full max-w-3xl p-5 bg-white border border-gray-200 rounded-lg mx-auto">
-            <div className="flex items-center justify-between pb-2 mb-5 border-b border-gray-400">
+          <div className="w-full max-w-3xl p-5 bg-white dark:bg-muted border border-gray-200 dark:border-muted-foreground dark:border-[0.1px] rounded-lg mx-auto">
+            <div className="flex items-center justify-between pb-2 mb-5 border-b border-gray-400 dark:border-muted-foreground dark:border-b-[0.1px]">
               <h2 className="text-lg lg:text-2xl font-bold"> Blog Editor</h2>
               <button
                 onClick={() => setShowAIGenerator(!showAIGenerator)}
@@ -283,7 +283,7 @@ export default function CreateBlog({
                 <div className="sm:col-span-2">
                   <label
                     htmlFor="authorName"
-                    className="block text-sm font-medium leading-6 text-gray-900 mb-2"
+                    className="block text-sm font-medium leading-6 text-gray-900 dark:text-foreground mb-2"
                   >
                     Author
                   </label>
@@ -297,7 +297,7 @@ export default function CreateBlog({
                       name="authorName"
                       id="authorName"
                       autoComplete="given-name"
-                      className="block w-full rounded-md border border-[#cbd5e1] py-2 px-4 text-gray-900 shadow-sm placeholder:text-gray-400 focus:ring-inset focus:ring-green-600 focus:ring-1 focus:outline-none  sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md dark:bg-muted border border-[#cbd5e1] dark:border-muted-foreground dark:border-[0.1px] py-2 px-4 text-gray-900 dark:text-foreground shadow-sm placeholder:text-gray-400 focus:ring-inset focus:ring-green-600 focus:ring-1 focus:outline-none  sm:text-sm sm:leading-6"
                       placeholder="Type Author Name here..."
                     />
                   </div>
@@ -305,7 +305,7 @@ export default function CreateBlog({
 
                 {/* =====Blog Banner ===== */}
                 <section className="sm:col-span-2">
-                  <div className="border-[0.5px] border-slate-300 shadow-sm dark:border-muted px-4 pt-3 pb-6 md:pt-6 md:pb-6 rounded-xl bg-white mt-6">
+                  <div className="border-[0.5px] border-slate-300 shadow-sm dark:border-muted px-4 pt-3 pb-6 md:pt-6 md:pb-6 rounded-xl bg-white dark:bg-background mt-6">
                     <p className="text-sm font-medium flex items-center justify-between">
                       Blog Banner{" "}
                       {userImage && (
@@ -315,7 +315,7 @@ export default function CreateBlog({
                         />
                       )}
                     </p>
-                    <div className="flex items-center justify-center space-x-2 md:space-x-6 bg-white dark:bg-background rounded-2xl  border-[0.6px] border-slate-300 shadow-sm dark:border-muted mt-4 cursor-pointer">
+                    <div className="flex items-center justify-center space-x-2 md:space-x-6 bg-white dark:bg-muted rounded-2xl  border-[0.6px] border-slate-300 shadow-sm dark:border-muted mt-4 cursor-pointer">
                       <label
                         htmlFor="bannerInput"
                         className="w-full p-3 flex justify-between tracking-wide cursor-pointer"
@@ -358,7 +358,7 @@ export default function CreateBlog({
                 <div className="sm:col-span-2">
                   <label
                     htmlFor="title"
-                    className="block text-sm font-medium leading-6 text-gray-900 mb-2 "
+                    className="block text-sm font-medium leading-6 text-gray-900 dark:text-foreground mb-2 "
                   >
                     Blog Title
                   </label>
@@ -370,7 +370,7 @@ export default function CreateBlog({
                       name="title"
                       id="title"
                       autoComplete="given-name"
-                      className="block w-full rounded-md border border-[#cbd5e1] py-2 px-4 text-gray-900 shadow-sm placeholder:text-gray-400 focus:ring-inset focus:ring-green-600 focus:ring-1 focus:outline-none sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md dark:bg-muted border border-[#cbd5e1] dark:border-muted-foreground dark:border-[0.1px] py-2 px-4 text-gray-900 dark:text-foreground shadow-sm placeholder:text-gray-400 focus:ring-inset focus:ring-green-600 focus:ring-1 focus:outline-none sm:text-sm sm:leading-6"
                       placeholder="Type the Course title"
                     />
                   </div>
@@ -379,7 +379,7 @@ export default function CreateBlog({
                 <div className="sm:col-span-2">
                   <label
                     htmlFor="slug"
-                    className="block text-sm font-medium leading-6 text-gray-900 mb-2 "
+                    className="block text-sm font-medium leading-6 text-gray-900 dark:text-foreground mb-2 "
                   >
                     Blog Slug
                   </label>
@@ -391,7 +391,7 @@ export default function CreateBlog({
                       id="slug"
                       autoComplete="slug"
                       readOnly
-                      className="block w-full rounded-md bg-slate-100 cursor-not-allowed border border-[#cbd5e1] py-2 px-4 text-gray-900 shadow-sm placeholder:text-gray-400 focus:outline-none sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md dark:bg-muted bg-slate-100 cursor-not-allowed border border-[#cbd5e1] dark:border-muted-foreground dark:border-[0.1px] py-2 px-4 text-gray-900 dark:text-foreground shadow-sm placeholder:text-gray-400 focus:outline-none sm:text-sm sm:leading-6"
                       placeholder="blug--slug"
                     />
                   </div>
@@ -400,7 +400,7 @@ export default function CreateBlog({
                 <div className="sm:col-span-2">
                   <label
                     htmlFor="subTitle"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-foreground dark:text-white"
                   >
                     Blog Description
                   </label>
@@ -412,7 +412,7 @@ export default function CreateBlog({
                       setBlogData({ ...blogData, subTitle: e.target.value })
                     }
                     value={blogData.subTitle}
-                    className="block p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-inset focus:ring-green-600 focus:ring-1 focus:outline-none "
+                    className="block p-2.5 w-full text-sm text-gray-900 dark:text-foreground bg-white dark:bg-muted rounded-lg border border-gray-300 dark:border-muted-foreground dark:border-[0.1px] focus:ring-inset focus:ring-green-600 focus:ring-1 focus:outline-none "
                     placeholder="Write your thoughts here..."
                   ></textarea>
                 </div>
@@ -420,7 +420,7 @@ export default function CreateBlog({
                 <div className="sm:col-span-2">
                   <label
                     htmlFor="content"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-foreground dark:text-white"
                   >
                     Blog Content
                   </label>
@@ -470,12 +470,12 @@ export default function CreateBlog({
           </div>
 
           {/*========Blog View======= */}
-          <div className="w-full max-w-3xl p-7 bg-white border border-gray-200 rounded-lg mx-auto">
-            <div className="flex items-center justify-between pb-2 mb-5 border-b border-gray-400">
+          <div className="w-full max-w-3xl p-7 bg-white dark:bg-muted border border-gray-200 dark:border-muted-foreground dark:border-[0.1px] rounded-lg mx-auto">
+            <div className="flex items-center justify-between pb-2 mb-5 border-b border-gray-400 dark:border-muted-foreground dark:border-b-[0.1px]">
               <h2 className="text-lg lg:text-2xl font-bold">Blog View</h2>
               <div
                 onClick={() => setShowPreview(true)}
-                className="flex p-2 md:p-3 justify-center items-center gap-[8px] rounded text-white w-[120px] md:w-[150px] lg:w-[120px] cursor-pointer font-light shadow-sm bg-gradient-to-r from-[#49AD51] to-[#B1D045]"
+                className="flex p-2 justify-center items-center gap-[8px] rounded text-white w-[120px] md:w-[150px] lg:w-[120px] cursor-pointer font-light shadow-sm bg-gradient-to-r from-[#49AD51] to-[#B1D045]"
               >
                 <p className="text-[#FFFFFF] text-sm md:text-md">
                   Preveiw Blog
@@ -485,7 +485,7 @@ export default function CreateBlog({
 
             <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
               <div className="sm:col-span-2">
-                <h2 className="block text-sm font-medium leading-6 text-gray-900 mb-2 ">
+                <h2 className="block text-sm font-medium leading-6 text-gray-900 dark:text-foreground mb-2 ">
                   Blog Title
                 </h2>
                 <div className="mt-2">
@@ -493,7 +493,7 @@ export default function CreateBlog({
                 </div>
               </div>
               <div className="sm:col-span-2">
-                <h2 className="block text-sm font-medium leading-6 text-gray-900 mb-2 ">
+                <h2 className="block text-sm font-medium leading-6 text-gray-900 dark:text-foreground mb-2 ">
                   Blog Slug
                 </h2>
                 <div className="mt-2">
@@ -501,13 +501,13 @@ export default function CreateBlog({
                 </div>
               </div>
               <div className="sm:col-span-2">
-                <h2 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                <h2 className="block mb-2 text-sm font-medium text-gray-900 dark:text-foreground">
                   Blog Description
                 </h2>
                 <p>{blogData.subTitle}</p>
               </div>
               <div className="sm:col-span-full">
-                <h2 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                <h2 className="block mb-2 text-sm font-medium text-gray-900 dark:text-foreground">
                   Blog Content
                 </h2>
                 {parse(blogData.content)}
@@ -517,7 +517,7 @@ export default function CreateBlog({
         </div>
       </div>
       <Modal show={showAIGenerator} onClose={() => setShowAIGenerator(false)}>
-        <div className="w-full max-w-3xl p-5 bg-white border border-gray-200 rounded-lg mx-auto mb-4">
+        <div className="w-full max-w-3xl p-5 bg-white dark:bg-muted border border-gray-200 dark:border-muted-foreground dark:border-[0.1px] rounded-lg mx-auto mb-4">
           <AIGenerateBlog
             setBlogData={setBlogData}
             setShowAIGenerator={setShowAIGenerator}
@@ -525,8 +525,8 @@ export default function CreateBlog({
         </div>
       </Modal>
       <Modal show={showPreview} onClose={() => setShowPreview(false)}>
-        <div className="w-full md:w-[672px] lg:w-[768px] p-7 bg-white border border-gray-200 rounded-lg">
-          <h2 className="flex justify-between text-2xl lg:text-3xl font-bold border-b border-gray-400 pb-2 mb-5 ">
+        <div className="w-full md:w-[672px] lg:w-[768px] p-7 bg-whit dark:bg-muted border border-gray-200 dark:border-muted-foreground dark:border-[0.1px] rounded-lg">
+          <h2 className="flex justify-between text-2xl lg:text-3xl font-bold border-b border-gray-400 dark:border-muted-foreground dark:border-b-[0.1px] pb-2 mb-5 ">
             Blog View
             <X
               onClick={() => setShowPreview(false)}
@@ -540,7 +540,7 @@ export default function CreateBlog({
               <p className="underline text-blue-400"> {blogData?.authorName}</p>
             </div>
             <div className="cursor-pointer">
-              <p className="flex items-center cursor-pointer gap-2 border text-sm border-slate-200 bg-white rounded-2xl px-3 py-1">
+              <p className="flex items-center cursor-pointer gap-2 border text-sm border-slate-200 dark:border-background bg-white dark:bg-muted-foreground rounded-2xl px-3 py-1">
                 <Share2 className="size-4" />
                 Share
               </p>

@@ -22,10 +22,9 @@ import Link from "next/link";
 
 interface BlogDetailsProps {
   blogSlug?: string;
-  token?: any;
 }
 
-export default function BlogDetails({ blogSlug, token }: BlogDetailsProps) {
+export default function BlogDetails({ blogSlug }: BlogDetailsProps) {
   const [showEditBlog, setShowEditBlog] = useState(false);
   const [showActions, setShowActions] = useState(false);
   const shareRef = useRef<HTMLDivElement | null>(null);
@@ -92,7 +91,6 @@ export default function BlogDetails({ blogSlug, token }: BlogDetailsProps) {
       {showEditBlog ? (
         <EditBlog
           blogDetailData={blogDetailData}
-          token={token}
           setShowEditBlog={setShowEditBlog}
         />
       ) : (

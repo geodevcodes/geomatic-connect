@@ -65,7 +65,7 @@ export function AIGenerateBlog({
   };
 
   return (
-    <div className="p-4 border rounded-lg bg-gray-50">
+    <div className="p-4 border rounded-lg bg-gray-50 dark:bg-muted">
       <h3 className="flex justify-between items-center text-lg font-semibold">
         AI Blog Generator
         <X
@@ -81,7 +81,7 @@ export function AIGenerateBlog({
             type="text"
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded dark:bg-muted dark:border-muted-foreground dark:border-[0.1px]"
             placeholder="What should the blog be about?"
           />
           {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
@@ -93,7 +93,7 @@ export function AIGenerateBlog({
             <select
               value={tone}
               onChange={(e) => setTone(e.target.value)}
-              className="w-full p-2 border rounded"
+              className="w-full p-2 border rounded dark:bg-muted dark:border-muted-foreground dark:border-[0.1px]"
             >
               <option value="professional">Professional</option>
               <option value="casual">Casual</option>
@@ -107,7 +107,7 @@ export function AIGenerateBlog({
             <select
               value={style}
               onChange={(e) => setStyle(e.target.value)}
-              className="w-full p-2 border rounded"
+              className="w-full p-2 border rounded dark:bg-muted dark:border-muted-foreground dark:border-[0.1px]"
             >
               <option value="informative">Informative</option>
               <option value="storytelling">Storytelling</option>
@@ -121,7 +121,7 @@ export function AIGenerateBlog({
             <select
               value={length}
               onChange={(e) => setLength(e.target.value)}
-              className="w-full p-2 border rounded"
+              className="w-full p-2 border rounded dark:bg-muted dark:border-muted-foreground dark:border-[0.1px]"
             >
               <option value="short">Short (300 words)</option>
               <option value="medium">Medium (600 words)</option>
