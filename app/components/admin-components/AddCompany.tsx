@@ -2,7 +2,6 @@
 import { accommodationData, stateData } from "@/utils/FilterData";
 import { useRegisterRequest } from "@/app/services/auth.request";
 import ReactSelect from "@/app/components/inputs/ReactSelect";
-import { useQueryClient } from "@tanstack/react-query";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { ArrowRight, Upload, X } from "lucide-react";
 import PhoneInput from "react-phone-number-input";
