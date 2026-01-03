@@ -27,14 +27,14 @@ export default function BlogHome() {
             </p>
             <div onClick={() => setShowCreateBlog((prev) => !prev)}>
               {showCreateBlog ? (
-                <div className="my-4 flex p-2 md:p-3 justify-center items-center gap-[8px] rounded-[8px] text-white w-full md:w-[150px] cursor-pointer  px-3.5 py-4 font-light shadow-sm bg-gradient-to-r from-[#49AD51] to-[#B1D045]">
+                <div className="my-4 flex p-2 md:p-3 justify-center items-center gap-[8px] rounded-[8px] text-white w-full md:w-[150px] cursor-pointer  px-3.5 py-4 font-light shadow-sm bg-gradient-to-r from-[#49AD51] to-[#B1D045] dark:from-muted dark:to-muted-foreground">
                   <ArrowLeft className="w-4 h-4 md:w-5 md:h-5" />
                   <p className="text-[#FFFFFF] text-sm md:text-md">
                     Back to Blog
                   </p>
                 </div>
               ) : (
-                <div className="my-4 flex p-2 md:p-3 justify-center items-center gap-[8px] rounded-[8px] text-white w-full md:w-[150px] cursor-pointer  px-3.5 py-4 font-light shadow-sm bg-gradient-to-r from-[#49AD51] to-[#B1D045]">
+                <div className="my-4 flex p-2 md:p-3 justify-center items-center gap-[8px] rounded-[8px] text-white w-full md:w-[150px] cursor-pointer  px-3.5 py-4 font-light shadow-sm bg-gradient-to-r from-[#49AD51] to-[#B1D045] dark:from-muted dark:to-muted-foreground">
                   <p className="text-[#FFFFFF] text-sm md:text-md">
                     Create Blog
                   </p>

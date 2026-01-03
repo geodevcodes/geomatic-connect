@@ -436,7 +436,7 @@ export default function EditBlog({
                   type="submit"
                   disabled={isUpdating}
                   onClick={() => handleSubmit("create")}
-                  className="flex justify-center items-center gap-1 mt-4 sm:mt-6 text-sm text-center text-white rounded-[8px] cursor-pointer  px-3.5 py-3 font-light shadow-sm bg-gradient-to-r from-[#49AD51] to-[#B1D045]"
+                  className="flex justify-center items-center gap-1 mt-4 sm:mt-6 text-sm text-center text-white rounded-[8px] cursor-pointer  px-3.5 py-3 font-light shadow-sm bg-gradient-to-r from-[#49AD51] to-[#B1D045] dark:from-muted dark:to-muted-foreground"
                 >
                   {isUpdating ? (
                     <>
@@ -454,7 +454,7 @@ export default function EditBlog({
                   type="submit"
                   disabled={isPublishing}
                   onClick={() => handleSubmit("publish")}
-                  className="flex justify-center items-center gap-1 mt-4 sm:mt-6 text-sm text-center text-white rounded-[8px] cursor-pointer  px-3.5 py-3 font-light shadow-sm bg-gradient-to-r from-[#49AD51] to-[#B1D045]"
+                  className="flex justify-center items-center gap-1 mt-4 sm:mt-6 text-sm text-center text-white rounded-[8px] cursor-pointer  px-3.5 py-3 font-light shadow-sm bg-gradient-to-r from-[#49AD51] to-[#B1D045] dark:from-muted dark:to-muted-foreground"
                 >
                   {isPublishing ? (
                     <>
@@ -478,7 +478,7 @@ export default function EditBlog({
               <h2 className="text-lg lg:text-2xl font-bold">Blog View</h2>
               <div
                 onClick={() => setShowPreview(true)}
-                className="flex p-2 justify-center items-center gap-[8px] rounded-[8px] text-white w-[120px] md:w-[150px] lg:w-[120px] cursor-pointer font-light shadow-sm bg-gradient-to-r from-[#49AD51] to-[#B1D045]"
+                className="flex p-2 justify-center items-center gap-[8px] rounded-[8px] text-white w-[120px] md:w-[150px] lg:w-[120px] cursor-pointer font-light shadow-sm bg-gradient-to-r from-[#49AD51] to-[#B1D045] dark:from-muted dark:to-muted-foreground"
               >
                 <p className="text-[#FFFFFF] text-sm md:text-md">
                   Preveiw Blog

@@ -266,7 +266,7 @@ export default function CreateBlog({
               <h2 className="text-lg lg:text-2xl font-bold"> Blog Editor</h2>
               <button
                 onClick={() => setShowAIGenerator(!showAIGenerator)}
-                className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 font-light shadow-sm bg-gradient-to-r from-[#49AD51] to-[#B1D045]"
+                className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 font-light shadow-sm bg-gradient-to-r from-[#49AD51] to-[#B1D045] dark:from-muted dark:to-muted-foreground"
               >
                 Build with AI
                 <Sparkles className="w-4 h-4" />
@@ -432,7 +432,7 @@ export default function CreateBlog({
                   type="submit"
                   disabled={isCreating}
                   onClick={() => handleSubmit("create")}
-                  className="flex justify-center items-center gap-1 mt-4 sm:mt-6 text-sm text-center text-white rounded-[8px] cursor-pointer  px-3.5 py-3 font-light shadow-sm bg-gradient-to-r from-[#49AD51] to-[#B1D045]"
+                  className="flex justify-center items-center gap-1 mt-4 sm:mt-6 text-sm text-center text-white rounded-[8px] cursor-pointer  px-3.5 py-3 font-light shadow-sm bg-gradient-to-r from-[#49AD51] to-[#B1D045] dark:from-muted dark:to-muted-foreground"
                 >
                   {isCreating ? (
                     <>
@@ -451,7 +451,7 @@ export default function CreateBlog({
                   type="submit"
                   disabled={isPublishing}
                   onClick={() => handleSubmit("publish")}
-                  className="flex justify-center items-center gap-1 mt-4 sm:mt-6 text-sm text-center text-white rounded-[8px] cursor-pointer  px-3.5 py-3 font-light shadow-sm bg-gradient-to-r from-[#49AD51] to-[#B1D045]"
+                  className="flex justify-center items-center gap-1 mt-4 sm:mt-6 text-sm text-center text-white rounded-[8px] cursor-pointer  px-3.5 py-3 font-light shadow-sm bg-gradient-to-r from-[#49AD51] to-[#B1D045] dark:from-muted dark:to-muted-foreground"
                 >
                   {isPublishing ? (
                     <>
@@ -475,7 +475,7 @@ export default function CreateBlog({
               <h2 className="text-lg lg:text-2xl font-bold">Blog View</h2>
               <div
                 onClick={() => setShowPreview(true)}
-                className="flex p-2 justify-center items-center gap-[8px] rounded text-white w-[120px] md:w-[150px] lg:w-[120px] cursor-pointer font-light shadow-sm bg-gradient-to-r from-[#49AD51] to-[#B1D045]"
+                className="flex p-2 justify-center items-center gap-[8px] rounded text-white w-[120px] md:w-[150px] lg:w-[120px] cursor-pointer font-light shadow-sm bg-gradient-to-r from-[#49AD51] to-[#B1D045] dark:from-muted dark:to-muted-foreground"
               >
                 <p className="text-[#FFFFFF] text-sm md:text-md">
                   Preveiw Blog
