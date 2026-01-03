@@ -79,7 +79,7 @@ export default function CompanyNavBar({ session }: { session: any }) {
       </p>
 
       <nav
-        className={`${isSubscribed && "lg:top-6"}  bg-white dark:bg-background fixed px-6 z-[1000] lg:px-12 xl:px-20 py-[20px] left-0 right-0 border-b border-accent`}
+        className={`${isSubscribed && "lg:top-6"} bg-white/50 backdrop-blur-md dark:bg-background/95 dark:backdrop-blur-md fixed px-6 z-[1000] lg:px-12 xl:px-20 py-[20px] left-0 right-0 border-b border-accent`}
       >
         <div className="flex justify-between items-center lg:block ">
           <div className="lg:flex justify-between items-center">

@@ -81,7 +81,7 @@ export default function StudentNavBar({ session }: { session: any }) {
         </motion.span>
       </p>
       <nav
-        className={`${isSubscribed && "lg:top-6"} bg-white dark:bg-background fixed px-6 z-[1000] lg:px-12 xl:px-20 py-[20px] top-0 left-0 right-0 border-b border-accent`}
+        className={`${isSubscribed && "lg:top-6"} bg-white/50 backdrop-blur-md dark:bg-background/95 dark:backdrop-blur-md fixed px-6 z-[1000] lg:px-12 xl:px-20 py-[20px] top-0 left-0 right-0 border-b border-accent`}
       >
         <div className="flex justify-between items-center lg:block">
           <div className="lg:flex justify-between items-center">

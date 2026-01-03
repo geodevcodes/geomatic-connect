@@ -42,7 +42,7 @@ export default function AdminNavBar({ session }: { session: any }) {
 
   return (
     <>
-      <nav className="bg-white dark:bg-background fixed px-6 z-[1000] lg:px-12 xl:px-20 py-[20px] top-0 left-0 right-0 border-b border-accent ">
+      <nav className="bg-white/50 backdrop-blur-md dark:bg-background/95 dark:backdrop-blur-md fixed px-6 z-[1000] lg:px-12 xl:px-20 py-[20px] top-0 left-0 right-0 border-b border-accent ">
         <div className="flex justify-between items-center lg:block ">
           <div className="lg:flex justify-between items-center">
             <div className="flex items-center">
@@ -159,7 +159,7 @@ export default function AdminNavBar({ session }: { session: any }) {
           </div>
           {/* ======= Menu button (Hamburger button) ======*/}
           <div className="lg:hidden flex space-x-3">
-            {/* <ModeToggle /> */}
+            <ThemeToggle />
             <div className="bg-slate-300 dark:border-muted dark:border-[0.3px] dark:bg-background dark:hover:bg-muted p-2 rounded-lg flex items-center justify-center">
               <Bell size={18} />
             </div>
