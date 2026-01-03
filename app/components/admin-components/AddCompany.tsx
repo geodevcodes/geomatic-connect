@@ -87,7 +87,6 @@ export default function AddCompany({ setShowAddCompany }: AddUserProps) {
     formData.append("professionalId", data?.professionalId);
     formData.append("phoneNumber", data?.mobileNumber);
     formData.append("role", "Company");
-    // formData.append("password", "987654321");
 
     // Only append files if they are selected
     if (selectedFile) {
