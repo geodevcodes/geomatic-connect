@@ -22,7 +22,7 @@ export default function BlogHome({ token }: BlogHomeProps) {
     <>
       <main className="flex min-h-screen flex-col pt-24 lg:pt-24">
         <div className="pb-20">
-          <div className="border-b border-slate-200 md:flex items-center justify-between">
+          <div className="border-b border-slate-200  dark:border-muted md:flex items-center justify-between">
             <p className="text-sm">
               <span className="text-3xl">./</span>{" "}
               <span className="text-2xl">Blog</span> Insights for your job
@@ -72,7 +72,7 @@ export default function BlogHome({ token }: BlogHomeProps) {
                   ))}
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10 mt-8 py-8 lg:px-6 rounded-2xl bg-white">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10 mt-8 py-8 lg:px-6 rounded-2xl bg-white dark:bg-muted">
                   {blogsData?.data?.map((item: any, index: number) => (
                     <Link
                       href={`/admin-dashboard/blog/${item.slug}`}

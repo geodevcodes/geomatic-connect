@@ -15,7 +15,11 @@ export const useCreateJobRequest = () => {
       queryClient.invalidateQueries({ queryKey: ["jobs"] });
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Something went wrong");
+      if (error.response?.status === 500) {
+        toast.error("Internal Server Error");
+      } else {
+        toast.error(error.response?.data?.message);
+      }
     },
   });
 };
@@ -74,7 +78,11 @@ export const useUpdateJobRequest = () => {
       queryClient.invalidateQueries({ queryKey: ["job"] });
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Something went wrong");
+      if (error.response?.status === 500) {
+        toast.error("Internal Server Error");
+      } else {
+        toast.error(error.response?.data?.message);
+      }
     },
   });
 };
@@ -92,7 +100,11 @@ export const useApplyToJobRequest = () => {
       queryClient.invalidateQueries({ queryKey: ["job"] });
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Something went wrong");
+      if (error.response?.status === 500) {
+        toast.error("Internal Server Error");
+      } else {
+        toast.error(error.response?.data?.message);
+      }
     },
   });
 };
@@ -110,7 +122,11 @@ export const useDeleteJobRequest = () => {
       queryClient.invalidateQueries({ queryKey: ["job"] });
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Something went wrong");
+      if (error.response?.status === 500) {
+        toast.error("Internal Server Error");
+      } else {
+        toast.error(error.response?.data?.message);
+      }
     },
   });
 };

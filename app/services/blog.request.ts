@@ -15,7 +15,11 @@ export const useCreateBlogRequest = () => {
       queryClient.invalidateQueries({ queryKey: ["blogs"] });
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Something went wrong");
+      if (error.response?.status === 500) {
+        toast.error("Internal Server Error");
+      } else {
+        toast.error(error.response?.data?.message);
+      }
     },
   });
 };
@@ -64,7 +68,11 @@ export const useUpdateBlogRequest = () => {
       queryClient.invalidateQueries({ queryKey: ["blog"] });
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Something went wrong");
+      if (error.response?.status === 500) {
+        toast.error("Internal Server Error");
+      } else {
+        toast.error(error.response?.data?.message);
+      }
     },
   });
 };
@@ -82,7 +90,11 @@ export const useDeleteBlogRequest = () => {
       queryClient.invalidateQueries({ queryKey: ["blog"] });
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Something went wrong");
+      if (error.response?.status === 500) {
+        toast.error("Internal Server Error");
+      } else {
+        toast.error(error.response?.data?.message);
+      }
     },
   });
 };

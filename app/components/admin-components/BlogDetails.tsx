@@ -37,7 +37,7 @@ export default function BlogDetails({ blogSlug, token }: BlogDetailsProps) {
     blogSlug as string
   );
   const blogId = blogDetailData?.data?._id;
-
+  console.log("blogDetailData", blogDetailData);
   // Share dropdown Handler
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -64,14 +64,17 @@ export default function BlogDetails({ blogSlug, token }: BlogDetailsProps) {
 
   // Delete A Blog Request Logic
   const deleteBlogHandler = async () => {
-    deleteBlog(blogId, {
-      onSuccess: () => {
-        console.log("blog deleted successfully");
-      },
-      onError: () => {
-        console.log("error deleting the blog");
-      },
-    });
+    deleteBlog(
+      { blogId },
+      {
+        onSuccess: () => {
+          console.log("blog deleted successfully");
+        },
+        onError: () => {
+          console.log("error deleting the blog");
+        },
+      }
+    );
   };
 
   return (
