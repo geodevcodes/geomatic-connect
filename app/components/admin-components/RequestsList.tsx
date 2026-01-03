@@ -11,7 +11,7 @@ import {
   Filter,
 } from "lucide-react";
 import { createColumnHelper } from "@tanstack/react-table";
-import { useQueryClient } from "@tanstack/react-query";
+import { formatDate, truncateString } from "@/utils/utils";
 import { Modal } from "@/app/components/modals/Modal";
 import { Table } from "@/app/components/tables/Table";
 import { ArrowDown, File } from "lucide-react";
@@ -30,6 +30,7 @@ interface notificationsData {
   institutionName: string;
   status: string;
   action: string;
+  createdAt?: any;
 }
 
 interface RequestsListProps {
@@ -38,7 +39,6 @@ interface RequestsListProps {
   setCurrentPage?: React.Dispatch<React.SetStateAction<number>>;
   currentPage?: number;
   limit?: number;
-  // setSearch: React.Dispatch<React.SetStateAction<string>>;
 }
 
 interface IndeterminateCheckboxProps {
@@ -70,13 +70,11 @@ export default function RequestsList({
   setCurrentPage,
   currentPage,
   limit,
-}: // setSearch,
-RequestsListProps) {
+}: RequestsListProps) {
   const [selectedRow, setSelectedRow] = useState<notificationsData | null>(
     null
   );
   const [selectedRows, setSelectedRows] = useState<RowType[]>([]);
-  const [resetCheckboxes, setResetCheckboxes] = useState(false);
   const actionDropDownRef = useRef<HTMLDivElement>(null);
   const [showActions, setShowActions] = useState(false);
   const [showSendRequest, setShowSendRequest] = useState<boolean>(false);
@@ -158,21 +156,14 @@ RequestsListProps) {
     const payload = {
       requestId,
     };
-    adminApproveStudentRequest(
-      {
-        payload,
+    adminApproveStudentRequest(payload, {
+      onSuccess: () => {
+        setShowActions(false);
       },
-      {
-        onSuccess: () => {
-          console.log("request approved successfully");
-          setShowActions(false);
-        },
-        onError: () => {
-          console.log("error creating request");
-          setShowActions(false);
-        },
-      }
-    );
+      onError: () => {
+        setShowActions(false);
+      },
+    });
   };
 
   // Decline Handler
@@ -180,21 +171,14 @@ RequestsListProps) {
     const payload = {
       requestId,
     };
-    adminDeclineStudentRequest(
-      {
-        payload,
+    adminDeclineStudentRequest(payload, {
+      onSuccess: () => {
+        setShowActions(false);
       },
-      {
-        onSuccess: () => {
-          console.log("request declined successfully");
-          setShowActions(false);
-        },
-        onError: () => {
-          console.log("error creating request");
-          setShowActions(false);
-        },
-      }
-    );
+      onError: () => {
+        setShowActions(false);
+      },
+    });
   };
 
   // create columnHelper
@@ -270,8 +254,19 @@ RequestsListProps) {
         </span>
       ),
     }),
+    columnHelper.accessor("createdAt", {
+      cell: (info) => <span>{formatDate(info?.row?.original?.createdAt)}</span>,
+      header: () => (
+        <span className="flex items-center text-[#101828] dark:text-accent-foreground">
+          Applied date
+          <ArrowDown size={18} className="ml-2" />
+        </span>
+      ),
+    }),
     columnHelper.accessor("institutionName", {
-      cell: (info) => <span>{info?.row?.original?.institutionName}</span>,
+      cell: (info) => (
+        <span>{truncateString(info?.row?.original?.institutionName, 20)}</span>
+      ),
       header: () => (
         <span className="text-[#101828] dark:text-accent-foreground">
           Institution Name
@@ -292,7 +287,11 @@ RequestsListProps) {
                 ? "bg-[#f3392f] text-[#FFFFFF] px-3 w-fit"
                 : info?.row?.original?.status === "Not Interested"
                   ? " bg-[#ecdb1d] text-[#766c17] px-3 w-fit"
-                  : " bg-[#D1FADF] text-[#079455] px-3 w-fit"
+                  : info?.row?.original?.status === "Declined"
+                    ? "bg-[#f3392f] text-[#FFFFFF] px-3 w-fit"
+                    : info?.row?.original?.status === "Sent to company"
+                      ? "bg-[#579bed] text-[#157af5] px-3 w-fit"
+                      : " bg-[#D1FADF] text-[#079455] px-3 w-fit"
             } text-center p-1 rounded-2xl 
             `}
         >
@@ -304,7 +303,7 @@ RequestsListProps) {
       cell: ({ row }) => (
         <div className="relative">
           <span
-            className="text-[#363944] flex items-center relative"
+            className="text-[#363944] dark:text-[#adb0be] flex items-center relative"
             onClick={() => {
               setSelectedRow(row.original);
               setShowActions(!showActions);
