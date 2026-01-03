@@ -43,7 +43,11 @@ export const useUpdateNotificationRequest = () => {
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Something went wrong");
+      if (error.response?.status === 500) {
+        toast.error("Internal Server Error");
+      } else {
+        toast.error(error.response?.data?.message);
+      }
     },
   });
 };
@@ -63,7 +67,11 @@ export const useDeleteNotificationRequest = () => {
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Something went wrong");
+      if (error.response?.status === 500) {
+        toast.error("Internal Server Error");
+      } else {
+        toast.error(error.response?.data?.message);
+      }
     },
   });
 };
