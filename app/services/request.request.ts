@@ -1,6 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axiosInstance from "./apiClient";
-import axios from "axios";
 import { toast } from "sonner";
 
 // GET(READ) REQUEST
@@ -93,7 +92,11 @@ export const useAdminSendRequestToCompany = () => {
       });
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Something went wrong");
+      if (error.response?.status === 500) {
+        toast.error("Internal Server Error");
+      } else {
+        toast.error(error.response?.data?.message);
+      }
     },
   });
 };
@@ -112,7 +115,11 @@ export const useCompanyApproveStudentRequest = () => {
       toast.success(data.message);
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Something went wrong");
+      if (error.response?.status === 500) {
+        toast.error("Internal Server Error");
+      } else {
+        toast.error(error.response?.data?.message);
+      }
     },
   });
 };
@@ -135,7 +142,11 @@ export const useAdminApproveStudentRequest = () => {
       });
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Something went wrong");
+      if (error.response?.status === 500) {
+        toast.error("Internal Server Error");
+      } else {
+        toast.error(error.response?.data?.message);
+      }
     },
   });
 };
@@ -158,7 +169,11 @@ export const useCompanyDeclineStudentRequest = () => {
       });
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Something went wrong");
+      if (error.response?.status === 500) {
+        toast.error("Internal Server Error");
+      } else {
+        toast.error(error.response?.data?.message);
+      }
     },
   });
 };
@@ -181,7 +196,11 @@ export const useAdminDeclineStudentRequest = () => {
       });
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Something went wrong");
+      if (error.response?.status === 500) {
+        toast.error("Internal Server Error");
+      } else {
+        toast.error(error.response?.data?.message);
+      }
     },
   });
 };

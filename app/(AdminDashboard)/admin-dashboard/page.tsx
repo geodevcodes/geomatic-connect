@@ -16,7 +16,7 @@ export default async function HomePage() {
   }
   return (
     <div>
-      <AdminHome token={token} />
+      <AdminHome />
     </div>
   );
 }

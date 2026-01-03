@@ -10,10 +10,7 @@ import AddCompany from "./AddCompany";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 
-interface AdminHomeProps {
-  token: string;
-}
-export default function AdminHome({ token }: AdminHomeProps) {
+export default function AdminHome() {
   const [showAddCompany, setShowAddCompany] = useState(false);
   const [search, setSearch] = useState("");
   const [debouncedSearch] = useDebounce(search, 500);

@@ -45,7 +45,6 @@ export default function RequestDetails({
           setIsForwarding(false);
         },
         onError: () => {
-          console.log("error creating request");
           setIsForwarding(false);
         },
       }
