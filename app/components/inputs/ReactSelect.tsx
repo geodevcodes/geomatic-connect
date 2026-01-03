@@ -32,7 +32,7 @@ const customStyles = (
   }),
   singleValue: (provided: any, state: any) => ({
     ...provided,
-    color: state.isDisabled
+    color: state.isDisabled && theme !== "dark"
       ? "black"
       : theme === "dark"
         ? "#ccd5e1"
