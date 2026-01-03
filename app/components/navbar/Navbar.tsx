@@ -50,7 +50,7 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="fixed w-full z-20 top-0 left-0 dark:bg-background/95 dark:backdrop-blur  py-2 md:py-2.5 border-b-[0.5px] bg-white shadow-[inset_-12px_-8px_40px_#46464620]">
+      <nav className="fixed w-full z-20 top-0 left-0 bg-white/50 backdrop-blur-md dark:bg-background/95 dark:backdrop-blur-md  py-2 md:py-2.5 border-b-[0.5px] shadow-[inset_-12px_-8px_40px_#46464620]">
         <div className="max-w-[1200px] mx-auto p-2 pr-4 md:px-2 flex justify-between items-center">
           {/* =======Company LOGO ==== */}
           <Link href="/" className="flex items-center">
