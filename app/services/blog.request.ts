@@ -6,7 +6,7 @@ import { toast } from "sonner";
 export const useCreateBlogRequest = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (payload: any) => {
+    mutationFn: async ({ payload }: { payload: any }) => {
       const response = await axiosInstance.post("/api/blogs", payload);
       return response.data;
     },

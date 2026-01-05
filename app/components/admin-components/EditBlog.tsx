@@ -199,7 +199,7 @@ export default function EditBlog({
         bannerFormData.append("upload_preset", "geomatic-connect");
 
         const bannerRes = await fetch(
-          `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_NAME}/image/upload`,
+          `https://api.cloudinary.com/v1_1/dgfjxhoae/image/upload`,
           {
             method: "POST",
             body: bannerFormData,
@@ -228,7 +228,7 @@ export default function EditBlog({
         formData.append("upload_preset", "geomatic-connect");
 
         const res = await fetch(
-          `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_NAME}/image/upload`,
+          `https://api.cloudinary.com/v1_1/dgfjxhoae/image/upload`,
           {
             method: "POST",
             body: formData,

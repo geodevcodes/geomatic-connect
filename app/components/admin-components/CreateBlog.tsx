@@ -10,7 +10,6 @@ import {
   X,
 } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
 import { Modal } from "@/app/components/modals/Modal";
 import { AIGenerateBlog } from "./AIGenerateBlog";
 import parse from "html-react-parser";
@@ -174,7 +173,7 @@ export default function CreateBlog({
         bannerFormData.append("upload_preset", "geomatic-connect");
 
         const bannerRes = await fetch(
-          `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_NAME}/image/upload`,
+          `https://api.cloudinary.com/v1_1/dgfjxhoae/image/upload`,
           {
             method: "POST",
             body: bannerFormData,
@@ -204,7 +203,7 @@ export default function CreateBlog({
 
         try {
           const res = await fetch(
-            `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_NAME}/image/upload`,
+            `https://api.cloudinary.com/v1_1/dgfjxhoae/image/upload`,
             {
               method: "POST",
               body: formData,
