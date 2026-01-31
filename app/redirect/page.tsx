@@ -31,7 +31,7 @@ export default function Redirect() {
           setTimeout(checkSession, 500); // Try again after 500ms
         } else {
           toast.error("Unable to verify your session");
-          return router.push("/login");
+          return router.push("/");
         }
       };
 
