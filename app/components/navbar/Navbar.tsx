@@ -12,6 +12,8 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
+const baseUrl = process.env.NEXT_PUBLIC_APP_URL;
+
 const routes = [
   {
     name: "FAQs",
@@ -23,15 +25,15 @@ const routes = [
 const mobileRoutes = [
   {
     name: "Log in",
-    href: "/login",
+    href: `${baseUrl}/`,
   },
   {
     name: "Sign Up",
-    href: "/signup",
+    href: `${baseUrl}/signup`,
   },
   {
     name: "Blog",
-    href: "/blog",
+    href: `${baseUrl}/blog`,
   },
 ];
 
