@@ -38,8 +38,8 @@ export default function OnboardingHome({ setStatus }: OnboardingHomeProps) {
           How are you planning to use <br /> Geomatic Connect?
         </p>
         <p className="text-center text-sm text-[#1F4D36]/70 mt-2">
-          We'll tailor your experience to your needs. <br /> You can change this
-          later.
+          We&apos;ll tailor your experience to your needs. <br /> You can change
+          this later.
         </p>
 
         {/* Options */}
