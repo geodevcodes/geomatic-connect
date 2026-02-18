@@ -71,7 +71,7 @@ export default function StudentSignup() {
         onError: () => {
           console.log("error creating user");
         },
-      }
+      },
     );
   };
 

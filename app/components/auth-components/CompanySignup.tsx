@@ -26,6 +26,7 @@ const schema = yup.object().shape({
   professionalId: yup.string().required("Professional ID is required"),
 });
 
+
 export default function CompanySignup() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
@@ -46,8 +47,8 @@ export default function CompanySignup() {
       companyName: data?.companyName,
       companyAddress: data?.companyAddress,
       email: data?.email,
-      password: data?.password,
       state: data?.state,
+      password: data?.password,
       professionalId: data?.professionalId,
       role: "Company",
     };
@@ -62,7 +63,7 @@ export default function CompanySignup() {
         onError: () => {
           console.log("error creating user");
         },
-      }
+      },
     );
   };
   return (
