@@ -10,7 +10,7 @@ const options = [
     id: "student_01",
     role: "User",
     icon: LuGraduationCap,
-    title: "I'm a Geomatics Student",
+    title: "I&apos;m a Geomatics Student",
     description: "Learn, connect, and grow in the geospatial field",
   },
   {
@@ -38,8 +38,8 @@ export default function OnboardingHome({ setStatus }: OnboardingHomeProps) {
           How are you planning to use <br /> Geomatic Connect?
         </p>
         <p className="text-center text-sm text-[#1F4D36]/70 mt-2">
-          We'll tailor your experience to your needs. <br /> You can change this
-          later.
+          We&apos;ll tailor your experience to your needs. <br /> You can change
+          this later.
         </p>
 
         {/* Options */}

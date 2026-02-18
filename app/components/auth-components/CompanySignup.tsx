@@ -1,14 +1,14 @@
 "use client";
-import { useState } from "react";
-import { BiHide, BiShow } from "react-icons/bi";
-import { useForm } from "react-hook-form";
-import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { accommodationData, stateData } from "@/utils/FilterData";
 import { useRegisterRequest } from "@/app/services/auth.request";
 import ReactSelect from "@/app/components/inputs/ReactSelect";
-import { stateData } from "@/utils/FilterData";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { BiHide, BiShow } from "react-icons/bi";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { useState } from "react";
+import * as yup from "yup";
+import Link from "next/link";
 
 const schema = yup.object().shape({
   companyName: yup.string().required("Company Name is required"),
@@ -24,8 +24,11 @@ const schema = yup.object().shape({
     .max(32, "Password must not exceed 32 characters"),
   state: yup.string().required("State is required"),
   professionalId: yup.string().required("Professional ID is required"),
+  accomodation: yup
+    .mixed<true | false>()
+    .oneOf([true, false], "Accomodation is required")
+    .required("Accomodation is required"),
 });
-
 
 export default function CompanySignup() {
   const router = useRouter();
@@ -50,6 +53,7 @@ export default function CompanySignup() {
       state: data?.state,
       password: data?.password,
       professionalId: data?.professionalId,
+      accomodation: data?.accomodation,
       role: "Company",
     };
     await registerUserRequest(
@@ -80,7 +84,7 @@ export default function CompanySignup() {
               className={`${
                 errors.companyName
                   ? "border-[1.3px] border-red-500 bg-[#FEF3F2]"
-                  : ""
+                  : "bg-[#FFFFFF]"
               } px-3 py-2.5 focus:outline-none placeholder:text-sm cursor-text flex justify-between rounded-lg w-full`}
             />
           </div>
@@ -88,7 +92,9 @@ export default function CompanySignup() {
           {/* ======= State ===== */}
           <div
             className={`${
-              errors.state ? "border-[1.3px] border-red-500 bg-[#FEF3F2]" : ""
+              errors.state
+                ? "border-[1.3px] border-red-500 bg-[#FEF3F2]"
+                : "bg-[#FFFFFF]"
             } mt-4 rounded-lg cursor-pointer  w-full`}
           >
             <ReactSelect
@@ -109,14 +115,36 @@ export default function CompanySignup() {
           <div className="mt-4">
             <input
               type="text"
-              placeholder="Your SURCON ID"
+              placeholder="e.g SURCON ID"
               {...register("professionalId")}
               maxLength={32}
               className={`${
                 errors.professionalId
                   ? "border-[1.3px] border-red-500 bg-[#FEF3F2]"
-                  : ""
+                  : "bg-[#FFFFFF]"
               } px-3 py-2.5 focus:outline-none placeholder:text-sm cursor-text flex justify-between rounded-lg w-full`}
+            />
+          </div>
+
+          {/* ======= Accommodation Availability ===== */}
+          <div
+            className={`${
+              errors.accomodation
+                ? "border-[1.3px] border-red-500 bg-[#FEF3F2]"
+                : "bg-[#FFFFFF]"
+            } mt-4 rounded-lg cursor-pointer  w-full`}
+          >
+            <ReactSelect
+              options={accommodationData}
+              placeholder="Accomodation Avalability"
+              padding={"4px"}
+              borderRadius={"10px"}
+              border="none"
+              backgroundColor={errors.accomodation ? "#FEF3F2" : "#ffffff"}
+              onChange={(option: any) => {
+                setValue("accomodation", option?.value || "");
+                trigger("accomodation"); // Trigger validation
+              }}
             />
           </div>
 
@@ -130,7 +158,7 @@ export default function CompanySignup() {
               className={`${
                 errors.companyAddress
                   ? "border-[1.3px] border-red-500 bg-[#FEF3F2]"
-                  : ""
+                  : "bg-[#FFFFFF]"
               } px-3 py-2.5 focus:outline-none placeholder:text-sm cursor-text flex justify-between rounded-lg w-full`}
             />
           </div>
@@ -143,7 +171,9 @@ export default function CompanySignup() {
               {...register("email")}
               maxLength={40}
               className={`${
-                errors.email ? "border-[1.3px] border-red-500 bg-[#FEF3F2]" : ""
+                errors.email
+                  ? "border-[1.3px] border-red-500 bg-[#FEF3F2]"
+                  : "bg-[#FFFFFF]"
               } px-3 py-2.5 focus:outline-none placeholder:text-sm cursor-text flex justify-between rounded-lg w-full`}
             />
           </div>
@@ -159,8 +189,8 @@ export default function CompanySignup() {
                 className={`${
                   errors.password
                     ? "border-[1.3px] border-red-500 bg-[#FEF3F2]"
-                    : ""
-                } pr-12 pl-3 py-2.5 focus:outline-none placeholder:text-sm cursor-text flex justify-between rounded-lg w-full`}
+                    : "bg-[#FFFFFF]"
+                }  pr-12 pl-3 py-2.5 focus:outline-none placeholder:text-sm cursor-text flex justify-between rounded-lg w-full text-[#000000]`}
               />
             </div>
             <span
