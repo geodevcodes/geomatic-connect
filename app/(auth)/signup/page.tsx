@@ -1,8 +1,8 @@
 "use client";
+import OnboardingHome from "@/app/components/auth-components/OnboardingHome";
 import StudentSignup from "@/app/components/auth-components/StudentSignup";
-import { useRouter, useSearchParams } from "next/navigation";
-import OnboardingHome from "@/app/components/auth-components/Onboarding";
 import CompanySignup from "@/app/components/auth-components/CompanySignup";
+import { useRouter, useSearchParams } from "next/navigation";
 import LeftContainer from "./leftContainer";
 import { useEffect, useState } from "react";
 import Link from "next/link";

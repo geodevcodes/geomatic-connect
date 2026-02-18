@@ -10,7 +10,7 @@ const options = [
     id: "student_01",
     role: "User",
     icon: LuGraduationCap,
-    title: "I'm a Geomatics Student",
+    title: "I&apos;m a Geomatics Student",
     description: "Learn, connect, and grow in the geospatial field",
   },
   {
