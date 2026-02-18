@@ -1,5 +1,4 @@
 "use client";
-import PackageInfo from "@/app/components/landing-page-components/PackageInfo";
 import { useGetUserByIdRequest } from "@/app/services/request.request";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -9,6 +8,7 @@ import {
   VerifyPaymentRequest,
 } from "@/app/services/payment.request";
 import { toast } from "sonner";
+import PackageInfo from "./PackageInfo";
 
 interface BillingProps {
   userId: string;

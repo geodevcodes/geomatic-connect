@@ -1,5 +1,4 @@
 "use client";
-import PackageInfo from "@/app/components/landing-page-components/PackageInfo";
 import { useGetUserByIdRequest } from "@/app/services/request.request";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -8,6 +7,7 @@ import {
   useAcceptPaymentRequest,
   VerifyPaymentRequest,
 } from "@/app/services/payment.request";
+import PackageInfo from "./PackageInfo";
 import { toast } from "sonner";
 
 interface SubscribeProps {
