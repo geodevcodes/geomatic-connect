@@ -31,7 +31,7 @@ export default function OnboardingHome({ setStatus }: OnboardingHomeProps) {
   };
 
   return (
-    <div className="bg-[#F1F4EA] overflow-y-hidden md:w-[40%] xl:w-1/3 h-full py-20 text-[#1F4D36]">
+    <div className="bg-[#F1F4EA] overflow-y-hidden md:w-[40%] xl:w-1/3 h-full pt-10 pb-20 text-[#1F4D36]">
       <div className="px-4 w-full max-w-[380px] mx-auto flex flex-col h-full justify-center">
         {/* Header */}
         <p className="text-center text-[22px] font-semibold leading-snug">
