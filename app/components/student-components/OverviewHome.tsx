@@ -13,10 +13,9 @@ import { useState } from "react";
 import Link from "next/link";
 
 interface OverviewHomeProps {
-  token: string;
   userId: string;
 }
-export default function OverviewHome({ token, userId }: OverviewHomeProps) {
+export default function OverviewHome({ userId }: OverviewHomeProps) {
   const [selected, setSelected] = useState("30 Days");
   const options = ["7 Days", "14 Days", "30 Days"];
   const {

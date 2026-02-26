@@ -17,7 +17,7 @@ export default async function HomePage() {
   }
   return (
     <main className="min-h-screen p-6 pt-24 lg:p-12 xl:p-20 lg:pt-32 xl:pt-32 font-sans text-md">
-      <OverviewHome token={token} userId={userId} />
+      <OverviewHome userId={userId} />
     </main>
   );
 }

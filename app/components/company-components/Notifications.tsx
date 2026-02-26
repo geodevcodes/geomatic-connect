@@ -13,13 +13,8 @@ import Trash from "@/app/components/trash/Trash";
 import { formatTimestamp } from "@/utils/utils";
 import { redirect } from "next/navigation";
 
-interface NotificationProps {
-  token: string;
-  setSelectedBillingCycleTab?: any;
-  selectedBillingCycleTab?: any;
-}
 
-export default function Notification({ token }: NotificationProps) {
+export default function Notification() {
   const [showMessage, setShowMessage] = useState(false);
   const [messageData, setMessageData] = useState(false);
   const [showDeleteNotification, setShowDeleteNotification] = useState(false);
@@ -168,7 +163,6 @@ export default function Notification({ token }: NotificationProps) {
       >
         <DeleteNotification
           setShowDeleteNotification={setShowDeleteNotification}
-          token={token}
           messageData={messageData}
         />
       </Modal>
