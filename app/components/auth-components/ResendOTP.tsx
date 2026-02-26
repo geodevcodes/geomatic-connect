@@ -17,13 +17,10 @@ export default function ResendOTP({ userEmail }: any) {
     resendVerifyOTP(
       { payload },
       {
-        onSuccess: (data) => {
-          toast.success(data?.message);
-        },
         onError: () => {
           console.log("error occured");
         },
-      }
+      },
     );
   };
   return (
