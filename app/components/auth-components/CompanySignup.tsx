@@ -4,7 +4,7 @@ import { useRegisterRequest } from "@/app/services/auth.request";
 import ReactSelect from "@/app/components/inputs/ReactSelect";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { BiHide, BiShow } from "react-icons/bi";
-// import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import * as yup from "yup";
@@ -31,7 +31,7 @@ const schema = yup.object().shape({
 });
 
 export default function CompanySignup() {
-  // const router = useRouter();
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const { mutateAsync: registerUserRequest, isPending: isSaving } =
     useRegisterRequest();
@@ -59,11 +59,11 @@ export default function CompanySignup() {
     await registerUserRequest(
       { formData },
       {
-        // onSuccess: () => {
-        //   setTimeout(() => {
-        //     router.push("/verify-email");
-        //   }, 5000);
-        // },
+        onSuccess: () => {
+          setTimeout(() => {
+            router.push("/login");
+          }, 5000);
+        },
         onError: () => {
           console.log("error creating user");
         },
