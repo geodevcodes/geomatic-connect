@@ -45,7 +45,7 @@ export default function OverviewHome({ token, userId }: OverviewHomeProps) {
           <div className="gap-2 my-6">
             <Trash
               headingText="No recent activities found."
-              subHeadingText="Navigate to your dashboard and make a request to your desired company."
+              subHeadingText="Navigate to your dashboard to approve or decline applications and see the activities here."
             />
           </div>
         ) : (
