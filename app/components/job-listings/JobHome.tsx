@@ -25,11 +25,11 @@ export default function JobHome() {
               itemId={item._id}
               imageUrl={item?.companyId?.avatarImage}
               title={item.jobTitle}
-              companyName={item.companyId.companyName}
-              createdTime={item.createdAt}
-              level={item.experienceLevel}
-              jobType={item.jobType}
-              location={item.location}
+              companyName={item?.companyId?.companyName}
+              createdTime={item?.createdAt}
+              level={item?.experienceLevel}
+              jobType={item?.jobType}
+              location={item?.location}
             />
           </div>
         ))
