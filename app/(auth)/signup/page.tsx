@@ -1,5 +1,6 @@
+import LeftContainer from "@/app/components/auth-components/leftContainer";
 import SignupHome from "@/app/components/auth-components/SignupHome";
-import LeftContainer from "./leftContainer";
+
 import { Suspense } from "react";
 
 export default function Signup() {

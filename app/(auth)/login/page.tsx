@@ -1,5 +1,6 @@
+import LeftContainer from "@/app/components/auth-components/leftContainer";
 import LoginHome from "@/app/components/auth-components/LoginHome";
-import LeftContainer from "./leftContainer";
+
 
 export default async function Login() {
   return (

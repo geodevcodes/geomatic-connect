@@ -1,5 +1,5 @@
 import ForgotPassword from "@/app/components/auth-components/ForgotPassword";
-import LeftContainer from "./leftContainer";
+import LeftContainer from "@/app/components/auth-components/leftContainer";
 
 export default async function ForgotPasswordPage() {
   return (

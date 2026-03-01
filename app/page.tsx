@@ -1,4 +1,4 @@
-import LeftContainer from "./components/auth-components/leftContainer";
+import LeftContainer from "@/app/components/auth-components/leftContainer";
 import LoginHome from "@/app/components/auth-components/LoginHome";
 import type { Metadata } from "next";
 
