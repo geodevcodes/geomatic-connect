@@ -1,6 +1,8 @@
 "use client";
+import GeomaticLogo from "@/public/images/Geomatic-Connect-Logo2b.png";
 import { LuGraduationCap, LuBuilding2 } from "react-icons/lu";
 import { useState } from "react";
+import Image from "next/image";
 
 interface OnboardingHomeProps {
   setStatus: any;
@@ -31,8 +33,17 @@ export default function OnboardingHome({ setStatus }: OnboardingHomeProps) {
   };
 
   return (
-    <div className="bg-[#F1F4EA] overflow-y-hidden md:w-[40%] xl:w-1/3 h-full pt-10 pb-20 text-[#1F4D36]">
+    <div className="bg-[#F1F4EA] overflow-y-hidden md:w-[40%] xl:w-1/3 h-full pb-20 text-[#1F4D36]">
       <div className="px-4 w-full max-w-[380px] mx-auto flex flex-col h-full justify-center">
+        <Image
+          src={GeomaticLogo}
+          alt="Geomatic connect brand logo"
+          width={200}
+          height={200}
+          priority
+          className="mx-auto object-cover w-[120px] z-[1000] h-[100px] relative text-[#1F4D36] text-4xl text-center flex justify-center items-center"
+        />
+
         {/* Header */}
         <p className="text-center text-[22px] font-semibold leading-snug">
           How are you planning to use <br /> Geomatic Connect?
