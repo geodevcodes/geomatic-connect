@@ -23,6 +23,11 @@ export const adminNavItems = [
     icon: RiMessage2Line,
   },
   {
+    name: "Jobs",
+    href: "/admin-dashboard/jobs",
+    icon: BriefcaseBusiness,
+  },
+  {
     name: "Billing",
     href: "/admin-dashboard/billing",
     icon: CreditCard,
@@ -142,10 +147,10 @@ export const adminBottomRouteLinks = [
     icon: GoHome,
   },
   {
-    name: "Billing",
-    href: "/billing",
-    key: "billing",
-    icon: MdOutlinePayment,
+    name: "Jobs",
+    href: "/jobs",
+    key: "jobs",
+    icon: BriefcaseBusiness,
   },
   {
     name: "Blog",
