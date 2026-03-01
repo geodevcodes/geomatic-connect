@@ -3,6 +3,7 @@ import GeomaticLogo from "@/public/images/Geomatic-Connect-Logo2b.png";
 import { LuGraduationCap, LuBuilding2 } from "react-icons/lu";
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 interface OnboardingHomeProps {
   setStatus: any;
@@ -98,6 +99,12 @@ export default function OnboardingHome({ setStatus }: OnboardingHomeProps) {
         >
           Continue
         </button>
+        <div className="mt-4 text-center text-xs flex items-center justify-center">
+          <p>Already have an account?</p>
+          <Link href="/login" className="underline ml-2">
+            Sign in
+          </Link>
+        </div>
       </div>
     </div>
   );
