@@ -92,47 +92,47 @@ export default function Billing({ userId }: BillingProps) {
       { payload },
       {
         onSuccess: (data) => {
+          setIsProcessing(false);
           const authUrl = data?.data?.authorization_url;
-          if (authUrl) {
+          const reference = data?.data?.reference;
+          if (authUrl && reference) {
+            localStorage.setItem("paymentReference", reference);
+            localStorage.setItem("subscriptionPlan", planMethod);
             window.location.href = authUrl;
           } else {
             toast.error("Unable to initialize payment");
-            setIsSubscribing(null);
           }
         },
         onError: () => {
-          toast.error("Payment initialization failed");
-          setIsSubscribing(null);
+          setIsProcessing(false);
         },
-      },
+      }
     );
   };
 
-  // Verify payment after Paystack redirects back
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const reference = params.get("reference");
-    const subscriptionPlan = params.get("subscriptionPlan");
+  // verifyPaymentAfterRedirect when page reloads or on mount
+  const verifyPaymentAfterRedirect = async () => {
+    const storedReference = localStorage.getItem("paymentReference");
+    const subscriptionPlan = localStorage.getItem("subscriptionPlan");
 
-    if (reference && subscriptionPlan) {
-      const verifyPayment = async () => {
-        try {
-          await VerifyPaymentRequest(reference, subscriptionPlan);
-
-          await queryClient.invalidateQueries({
-            queryKey: ["getUserByIdApi"],
-          });
-
-          toast.success("Payment successful 🎉");
-          window.history.replaceState({}, "", window.location.pathname);
-        } catch (error: any) {
-          toast.error(error?.data?.message || "Payment verification failed");
-        } finally {
-          setIsSubscribing(null);
-        }
-      };
-      verifyPayment();
+    if (storedReference && subscriptionPlan) {
+      try {
+        await VerifyPaymentRequest(storedReference, subscriptionPlan);
+        // Clear stored data
+        localStorage.removeItem("paymentReference");
+        localStorage.removeItem("subscriptionPlan");
+        await queryClient.invalidateQueries({
+          queryKey: ["getUserByIdApi"],
+        });
+      } catch (error: any) {
+        toast.error(error?.data?.message);
+      }
     }
+  };
+
+  // verifyPaymentAfterRedirect when page reloads or on mount
+  useEffect(() => {
+    verifyPaymentAfterRedirect();
   }, []);
 
   return (
@@ -182,7 +182,7 @@ export default function Billing({ userId }: BillingProps) {
               className="space-y-10 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-3"
             >
               {plans.map(
-                ({ planMethod, amount, color, popular, paymentPlanId }) => (
+                ({ planMethod, amount, color, popular }) => (
                   <div
                     key={planMethod}
                     style={{ borderTopColor: color }}
@@ -228,7 +228,7 @@ export default function Billing({ userId }: BillingProps) {
                         : "Subscribe"}
                     </p>
                   </div>
-                ),
+                )
               )}
             </motion.div>
           )}
