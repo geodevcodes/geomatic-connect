@@ -94,45 +94,45 @@ export default function Subscribe({ userId }: SubscribeProps) {
         onSuccess: (data) => {
           setIsProcessing(false);
           const authUrl = data?.data?.authorization_url;
-          const reference = data?.data?.reference;
-          if (authUrl && reference) {
-            localStorage.setItem("paymentReference", reference);
-            localStorage.setItem("subscriptionPlan", planMethod);
+          if (authUrl) {
             window.location.href = authUrl;
           } else {
             toast.error("Unable to initialize payment");
+            setIsSubscribing(null);
           }
         },
         onError: () => {
-          setIsProcessing(false);
+          toast.error("Payment initialization failed");
+          setIsSubscribing(null);
         },
-      }
+      },
     );
   };
 
-  // verifyPaymentAfterRedirect when page reloads or on mount
-  const verifyPaymentAfterRedirect = async () => {
-    const storedReference = localStorage.getItem("paymentReference");
-    const subscriptionPlan = localStorage.getItem("subscriptionPlan");
-
-    if (storedReference && subscriptionPlan) {
-      try {
-        await VerifyPaymentRequest(storedReference, subscriptionPlan);
-        // Clear stored data
-        localStorage.removeItem("paymentReference");
-        localStorage.removeItem("subscriptionPlan");
-        await queryClient.invalidateQueries({
-          queryKey: ["getUserByIdApi"],
-        });
-      } catch (error: any) {
-        toast.error(error?.data?.message);
-      }
-    }
-  };
-
-  // verifyPaymentAfterRedirect when page reloads or on mount
+  // Verify payment after Paystack redirects back
   useEffect(() => {
-    verifyPaymentAfterRedirect();
+    const params = new URLSearchParams(window.location.search);
+    const reference = params.get("reference");
+    const subscriptionPlan = params.get("subscriptionPlan");
+
+    if (reference && subscriptionPlan) {
+      const verifyPayment = async () => {
+        try {
+          await VerifyPaymentRequest(reference, subscriptionPlan);
+
+          await queryClient.invalidateQueries({
+            queryKey: ["getUserByIdApi"],
+          });
+          toast.success("Payment successful 🎉");
+          window.history.replaceState({}, "", window.location.pathname);
+        } catch (error: any) {
+          toast.error(error?.data?.message || "Payment verification failed");
+        } finally {
+          setIsSubscribing(null);
+        }
+      };
+      verifyPayment();
+    }
   }, []);
 
   return (
@@ -228,7 +228,7 @@ export default function Subscribe({ userId }: SubscribeProps) {
                         : "Subscribe"}
                     </p>
                   </div>
-                )
+                ),
               )}
             </motion.div>
           )}

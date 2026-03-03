@@ -23,7 +23,7 @@ export default function JobHome() {
         <div className="gap-2 my-6">
           <Trash
             headingText="No Jobs yet"
-            subHeadingText="No jobs have been created yet. Check back later!."
+            subHeadingText="No available jobs yet. Please, Check back later!."
           />
         </div>
       ) : (
