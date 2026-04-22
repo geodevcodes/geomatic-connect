@@ -13,7 +13,8 @@ interface VerifyEmailProps {
 }
 export default function VerifyEmail({ userEmail }: VerifyEmailProps) {
   const { mutate: verifyUserEmail, isPending } = useVerifyEmailRequest();
-  const { mutate: resendVerifyOTP } = useResendVerifyOTPRequest();
+  const { mutate: resendVerifyOTP, isPending: isResending } =
+    useResendVerifyOTPRequest();
   const [code, setCode] = useState(["", "", "", ""]);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const router = useRouter();
@@ -109,9 +110,15 @@ export default function VerifyEmail({ userEmail }: VerifyEmailProps) {
     const payload = {
       email: userEmail,
     };
-    resendVerifyOTP({ payload });
-    setTimer(60);
-    setCanResend(false);
+    resendVerifyOTP(
+      { payload },
+      {
+        onSuccess: () => {
+          setTimer(60);
+          setCanResend(false);
+        },
+      },
+    );
   };
 
   return (
@@ -120,7 +127,7 @@ export default function VerifyEmail({ userEmail }: VerifyEmailProps) {
         <div className="px-4 w-ful max-w-[340px] mx-auto">
           <p className="text-center text-[24px] ">Verify Email</p>
           <p className="text-center text-sm mt-3 mb-6 max-w-[250px] mx-auto">
-            Enter the 6-digit code sent to your email address.
+            Enter the 4-digit code sent to your email address.
           </p>
 
           <form onSubmit={handleSubmit}>
@@ -155,10 +162,14 @@ export default function VerifyEmail({ userEmail }: VerifyEmailProps) {
               <p>Didn&apos;t receive the email? </p>
               <button
                 onClick={() => resendVerificationCode()}
-                disabled={!canResend}
+                disabled={!canResend || isResending}
                 className="hover:underline ml-2 disabled:opacity-50"
               >
-                {canResend ? "Click to resend" : `Resend in ${timer}s`}
+                {isResending
+                  ? "Resending..."
+                  : canResend
+                    ? "Click to resend"
+                    : `Resend in ${timer}s`}
               </button>
             </div>
             <Link
