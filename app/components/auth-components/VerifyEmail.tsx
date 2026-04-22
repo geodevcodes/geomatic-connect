@@ -6,7 +6,6 @@ import {
   useResendVerifyOTPRequest,
   useVerifyEmailRequest,
 } from "@/app/services/auth.request";
-import { toast } from "sonner";
 import Link from "next/link";
 
 interface VerifyEmailProps {
@@ -53,7 +52,7 @@ export default function VerifyEmail({ userEmail }: VerifyEmailProps) {
 
   const handleKeyDown = (
     index: number,
-    e: React.KeyboardEvent<HTMLInputElement>
+    e: React.KeyboardEvent<HTMLInputElement>,
   ) => {
     if (e.key === "Backspace" && !code[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
@@ -79,10 +78,10 @@ export default function VerifyEmail({ userEmail }: VerifyEmailProps) {
           onError: () => {
             console.log("error occured");
           },
-        }
+        },
       );
     },
-    [code, router]
+    [code, router],
   );
 
   // Auto submit when all fields are filled
@@ -100,13 +99,10 @@ export default function VerifyEmail({ userEmail }: VerifyEmailProps) {
     resendVerifyOTP(
       { payload },
       {
-        onSuccess: (data) => {
-          toast.success(data?.message);
-        },
         onError: () => {
           console.log("error occured");
         },
-      }
+      },
     );
   };
 
