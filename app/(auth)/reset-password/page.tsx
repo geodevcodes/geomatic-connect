@@ -1,5 +1,5 @@
 import ResetPassword from "@/app/components/auth-components/ResetPassword";
-import LeftContainer from "./leftContainer";
+import LeftContainer from "@/app/components/auth-components/leftContainer";
 
 export default async function ResetPasswordPage({ searchParams }: { searchParams: any }) {
   const resetPasswordToken = searchParams?.resetToken;

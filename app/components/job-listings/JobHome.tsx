@@ -4,6 +4,7 @@ import JobListingCard from "@/app/components/cards/JobListingCard";
 import CreateJob from "@/app/components/job-listings/CreateJob";
 import { useGetJobsRequest } from "@/app/services/job.request";
 import { Modal } from "@/app/components/modals/Modal";
+import Trash from "@/app/components/trash/Trash";
 import { useState } from "react";
 
 export default function JobHome() {
@@ -18,6 +19,13 @@ export default function JobHome() {
         <div>
           <JobSkeleton />
         </div>
+      ) : jobsData?.data?.length === 0 ? (
+        <div className="gap-2 my-6">
+          <Trash
+            headingText="No Jobs yet"
+            subHeadingText="No available jobs yet. Please, Check back later!."
+          />
+        </div>
       ) : (
         jobsData?.data?.map((item: any, index: number) => (
           <div key={index}>
@@ -25,11 +33,11 @@ export default function JobHome() {
               itemId={item._id}
               imageUrl={item?.companyId?.avatarImage}
               title={item.jobTitle}
-              companyName={item.companyId.companyName}
-              createdTime={item.createdAt}
-              level={item.experienceLevel}
-              jobType={item.jobType}
-              location={item.location}
+              companyName={item?.companyId?.companyName}
+              createdTime={item?.createdAt}
+              level={item?.experienceLevel}
+              jobType={item?.jobType}
+              location={item?.location}
             />
           </div>
         ))

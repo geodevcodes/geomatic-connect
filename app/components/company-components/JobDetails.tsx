@@ -90,7 +90,7 @@ export default function JobDetails({ jobId }: JobDetailsProps) {
                         {jobData?.data?.jobTitle}
                       </p>
                       <p className="text-gray-500">
-                        {jobData?.data?.companyId.companyName}
+                        {jobData?.data?.companyId?.companyName}
                       </p>
                     </div>
                   </div>

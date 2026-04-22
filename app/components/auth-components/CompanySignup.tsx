@@ -61,7 +61,7 @@ export default function CompanySignup() {
       {
         onSuccess: () => {
           setTimeout(() => {
-            router.push("/verify-email");
+            router.push("/login");
           }, 5000);
         },
         onError: () => {

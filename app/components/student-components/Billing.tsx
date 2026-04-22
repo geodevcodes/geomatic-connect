@@ -182,7 +182,7 @@ export default function Billing({ userId }: BillingProps) {
               className="space-y-10 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-3"
             >
               {plans.map(
-                ({ planMethod, amount, color, popular, paymentPlanId }) => (
+                ({ planMethod, amount, color, popular }) => (
                   <div
                     key={planMethod}
                     style={{ borderTopColor: color }}

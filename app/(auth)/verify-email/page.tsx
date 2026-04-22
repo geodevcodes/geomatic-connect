@@ -1,5 +1,5 @@
+import LeftContainer from "@/app/components/auth-components/leftContainer";
 import VerifyEmail from "@/app/components/auth-components/VerifyEmail";
-import LeftContainer from "./leftContainer";
 import { redirect } from "next/navigation";
 
 export default async function VerifyEmailPage({ searchParams,}: {searchParams: any}) {

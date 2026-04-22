@@ -6,13 +6,11 @@ import { CircleAlert } from "lucide-react";
 
 interface DeleteNotificationProps {
   setShowDeleteNotification: Dispatch<SetStateAction<boolean>>;
-  token: any;
   messageData: any;
 }
 
 export default function DeleteNotification({
   setShowDeleteNotification,
-  token,
   messageData,
 }: DeleteNotificationProps) {
   const notificationId = messageData?._id;
@@ -33,7 +31,7 @@ export default function DeleteNotification({
         onError: () => {
           console.log("error deleting the notification");
         },
-      }
+      },
     );
   };
 
