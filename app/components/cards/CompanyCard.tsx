@@ -109,7 +109,6 @@ export default function CompanyCard({
                   <div className="flex items-center gap-2">
                     <GraduationCap size={24} />
                     <span className="dark:text-muted-foreground">
-                      {" "}
                       Accredited by SURCON
                     </span>
                   </div>
