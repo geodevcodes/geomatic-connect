@@ -6,7 +6,6 @@ import {
   useResendVerifyOTPRequest,
   useVerifyEmailRequest,
 } from "@/app/services/auth.request";
-import { toast } from "sonner";
 import Link from "next/link";
 
 interface VerifyEmailProps {
@@ -18,6 +17,21 @@ export default function VerifyEmail({ userEmail }: VerifyEmailProps) {
   const [code, setCode] = useState(["", "", "", ""]);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const router = useRouter();
+  // state
+  const [timer, setTimer] = useState(60);
+  const [canResend, setCanResend] = useState(false);
+
+  // Timer for resend button
+  useEffect(() => {
+    if (timer === 0) {
+      setCanResend(true);
+      return;
+    }
+    const interval = setInterval(() => {
+      setTimer((prev) => prev - 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [timer]);
 
   const handleChange = (index: number, value: string) => {
     const newCode = [...code];
@@ -53,7 +67,7 @@ export default function VerifyEmail({ userEmail }: VerifyEmailProps) {
 
   const handleKeyDown = (
     index: number,
-    e: React.KeyboardEvent<HTMLInputElement>
+    e: React.KeyboardEvent<HTMLInputElement>,
   ) => {
     if (e.key === "Backspace" && !code[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
@@ -79,10 +93,10 @@ export default function VerifyEmail({ userEmail }: VerifyEmailProps) {
           onError: () => {
             console.log("error occured");
           },
-        }
+        },
       );
     },
-    [code, router]
+    [code, router],
   );
 
   // Auto submit when all fields are filled
@@ -94,20 +108,13 @@ export default function VerifyEmail({ userEmail }: VerifyEmailProps) {
 
   // Resend verification code
   const resendVerificationCode = async () => {
+    if (!canResend) return;
     const payload = {
       email: userEmail,
     };
-    resendVerifyOTP(
-      { payload },
-      {
-        onSuccess: (data) => {
-          toast.success(data?.message);
-        },
-        onError: () => {
-          console.log("error occured");
-        },
-      }
-    );
+    resendVerifyOTP({ payload });
+    setTimer(60);
+    setCanResend(false);
   };
 
   return (
@@ -151,9 +158,10 @@ export default function VerifyEmail({ userEmail }: VerifyEmailProps) {
               <p>Didn&apos;t receive the email? </p>
               <button
                 onClick={() => resendVerificationCode()}
-                className="hover:underline ml-2"
+                disabled={!canResend}
+                className="hover:underline ml-2 disabled:opacity-50"
               >
-                Click to resend
+                {canResend ? "Click to resend" : `Resend in ${timer}s`}
               </button>
             </div>
             <Link
