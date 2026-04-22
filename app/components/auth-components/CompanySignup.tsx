@@ -111,11 +111,11 @@ export default function CompanySignup() {
             />
           </div>
 
-          {/* ======= Professional ID (SURCON ID) ===== */}
+          {/* ======= Professional ID (CAC NUMBER, RC NUMBER, SURCON ID) ===== */}
           <div className="mt-4">
             <input
               type="text"
-              placeholder="e.g SURCON ID"
+              placeholder="Your Professional ID (CAC NUMBER, SURCON ID)"
               {...register("professionalId")}
               maxLength={32}
               className={`${
