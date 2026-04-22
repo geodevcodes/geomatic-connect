@@ -17,7 +17,7 @@ export default function VerifyEmail({ userEmail }: VerifyEmailProps) {
   const [code, setCode] = useState(["", "", "", ""]);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const router = useRouter();
-  // state
+
   const [timer, setTimer] = useState(60);
   const [canResend, setCanResend] = useState(false);
 
@@ -89,9 +89,6 @@ export default function VerifyEmail({ userEmail }: VerifyEmailProps) {
             setTimeout(() => {
               router.push("/login");
             }, 5000);
-          },
-          onError: () => {
-            console.log("error occured");
           },
         },
       );

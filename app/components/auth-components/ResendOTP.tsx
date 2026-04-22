@@ -2,26 +2,36 @@
 import { useResendVerifyOTPRequest } from "@/app/services/auth.request";
 import { MdOutlineMail } from "react-icons/md";
 import { ArrowLeft } from "lucide-react";
-import { toast } from "sonner";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export default function ResendOTP({ userEmail }: any) {
-  const { mutate: resendVerifyOTP, isPending } = useResendVerifyOTPRequest();
+  const { mutate: resendVerifyOTP } = useResendVerifyOTPRequest();
+  const [timer, setTimer] = useState(60);
+  const [canResend, setCanResend] = useState(false);
+
+  // Timer for resend button
+  useEffect(() => {
+    if (timer === 0) {
+      setCanResend(true);
+      return;
+    }
+    const interval = setInterval(() => {
+      setTimer((prev) => prev - 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [timer]);
 
   // Resend verification code
   const resendVerificationCode = async () => {
+    if (!canResend) return;
     const payload = {
       email: userEmail,
     };
 
-    resendVerifyOTP(
-      { payload },
-      {
-        onError: () => {
-          console.log("error occured");
-        },
-      },
-    );
+    resendVerifyOTP({ payload });
+    setTimer(60);
+    setCanResend(false);
   };
   return (
     <>
@@ -51,9 +61,10 @@ export default function ResendOTP({ userEmail }: any) {
                 <p>Didn&apos;t receive the email? </p>
                 <button
                   onClick={() => resendVerificationCode()}
-                  className="hover:underline ml-2 text-[#1F4D36]"
+                  disabled={!canResend}
+                  className="hover:underline ml-2 text-[#1F4D36] disabled:opacity-50"
                 >
-                  {isPending ? "Resending.." : "Click to resend"}
+                  {canResend ? "Click to resend" : `Resend in ${timer}s`}
                 </button>
               </div>
               <Link
