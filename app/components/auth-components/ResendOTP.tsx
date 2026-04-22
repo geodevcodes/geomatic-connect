@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function ResendOTP({ userEmail }: any) {
-  const { mutate: resendVerifyOTP } = useResendVerifyOTPRequest();
+  const { mutate: resendVerifyOTP, isPending } = useResendVerifyOTPRequest();
   const [timer, setTimer] = useState(60);
   const [canResend, setCanResend] = useState(false);
 
@@ -29,9 +29,15 @@ export default function ResendOTP({ userEmail }: any) {
       email: userEmail,
     };
 
-    resendVerifyOTP({ payload });
-    setTimer(60);
-    setCanResend(false);
+    resendVerifyOTP(
+      { payload },
+      {
+        onSuccess: () => {
+          setTimer(60);
+          setCanResend(false);
+        },
+      },
+    );
   };
   return (
     <>
@@ -61,10 +67,14 @@ export default function ResendOTP({ userEmail }: any) {
                 <p>Didn&apos;t receive the email? </p>
                 <button
                   onClick={() => resendVerificationCode()}
-                  disabled={!canResend}
+                  disabled={!canResend || isPending}
                   className="hover:underline ml-2 text-[#1F4D36] disabled:opacity-50"
                 >
-                  {canResend ? "Click to resend" : `Resend in ${timer}s`}
+                  {isPending
+                    ? "Resending..."
+                    : canResend
+                      ? "Click to resend"
+                      : `Resend in ${timer}s`}
                 </button>
               </div>
               <Link
