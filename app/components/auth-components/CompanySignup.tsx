@@ -24,10 +24,7 @@ const schema = yup.object().shape({
     .max(32, "Password must not exceed 32 characters"),
   state: yup.string().required("State is required"),
   professionalId: yup.string().required("Professional ID is required"),
-  accomodation: yup
-    .mixed<true | false>()
-    .oneOf([true, false], "Accomodation is required")
-    .required("Accomodation is required"),
+  accommodation: yup.boolean().nullable().notRequired(),
 });
 
 export default function CompanySignup() {
@@ -42,7 +39,12 @@ export default function CompanySignup() {
     formState: { errors },
     setValue,
     trigger,
-  } = useForm({ resolver: yupResolver(schema) });
+  } = useForm({
+    resolver: yupResolver(schema),
+    defaultValues: {
+      accommodation: false,
+    },
+  });
 
   //Register User submission Logic
   const onSubmitHandler = async (data: any) => {
@@ -53,7 +55,7 @@ export default function CompanySignup() {
       state: data?.state,
       password: data?.password,
       professionalId: data?.professionalId,
-      accomodation: data?.accomodation,
+      accomodation: data?.accommodation,
       role: "Company",
     };
     await registerUserRequest(
@@ -129,21 +131,22 @@ export default function CompanySignup() {
           {/* ======= Accommodation Availability ===== */}
           <div
             className={`${
-              errors.accomodation
+              errors.accommodation
                 ? "border-[1.3px] border-red-500 bg-[#FEF3F2]"
                 : "bg-[#FFFFFF]"
             } mt-4 rounded-lg cursor-pointer  w-full`}
           >
             <ReactSelect
               options={accommodationData}
-              placeholder="Accomodation Avalability"
+              placeholder="accommodation Avalability"
               padding={"4px"}
               borderRadius={"10px"}
               border="none"
-              backgroundColor={errors.accomodation ? "#FEF3F2" : "#ffffff"}
+              backgroundColor={errors.accommodation ? "#FEF3F2" : "#ffffff"}
               onChange={(option: any) => {
-                setValue("accomodation", option?.value || "");
-                trigger("accomodation"); // Trigger validation
+                setValue("accommodation", option?.value ?? false, {
+                  shouldValidate: true,
+                });
               }}
             />
           </div>
