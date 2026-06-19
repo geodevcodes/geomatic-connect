@@ -53,9 +53,8 @@ export default function SendRequest({
   selectedCompanyId,
 }: SendRequestProps) {
   const [showSuccessMessage, setShowSuccessMessage] = useState<boolean>(false);
-  const { mutate: studentSendRequestToAdmin } = useStudentSendRequestToAdmin();
+  const { mutate: studentSendRequestToAdmin, isPending } = useStudentSendRequestToAdmin();
   const [responseData, setResponseData] = useState<any[]>([]);
-  const [isSaving, setIsSaving] = useState(false);
   const router = useRouter();
 
   // REACT HOOK FORM LOGIC
@@ -90,7 +89,6 @@ export default function SendRequest({
       }, 5000);
       return;
     }
-    setIsSaving(true);
     const payload = {
       studentId: userData?.data?._id,
       companyId: companyId ? companyId : selectedCompanyId,
@@ -100,21 +98,31 @@ export default function SendRequest({
       requestPurpose: data?.requestPurpose,
       backgroundHistory: data?.backgroundHistory,
     };
-    studentSendRequestToAdmin(
-      payload,
-      {
-        onSuccess: (data) => {
-          setResponseData(data);
-          setShowSuccessMessage(true);
+    studentSendRequestToAdmin(payload, {
+      onSuccess: (data) => {
+        setResponseData(data);
+        setShowSuccessMessage(true);
+
+        setTimeout(() => {
+          setShowSendRequest(false);
+        }, 5000);
+      },
+
+      onError: (error: any) => {
+        const status = error?.response?.status;
+        const message = error?.response?.data?.message;
+        if (
+          status === 400 &&
+          message ===
+            "You have reached your request limit. Kindly please subscribe to continue."
+        ) {
           setTimeout(() => {
-            setShowSendRequest(false);
-          }, 5000);
-        },
-        onError: () => {
-          console.log("error creating request");
-        },
-      }
-    );
+            router.push("/student-dashboard/billing");
+          }, 2000);
+          return;
+        }
+      },
+    });
   };
 
   return (
@@ -183,7 +191,7 @@ export default function SendRequest({
                     options={institutionData}
                     placeholder="Institution name"
                     value={institutionData.find(
-                      (option) => option.value === institutionNameValue
+                      (option) => option.value === institutionNameValue,
                     )}
                     onChange={(option: any) => {
                       setValue("institutionName", option?.value || "");
@@ -267,11 +275,11 @@ export default function SendRequest({
 
             {/* === Submit Button === */}
             <button
-              disabled={isSaving}
+              disabled={isPending}
               className="relative group cursor-pointer w-full mt-10 px-3.5 py-4 font-light text-white shadow-sm bg-gradient-to-r from-[#49AD51] to-[#B1D045] dark:bg-muted dark:bg-gradient-to-r dark:from-muted dark:to-muted"
             >
               <span className="text-base flex items-center gap-4 justify-center relative">
-                {isSaving ? "Submitting...." : "Submit Request"}
+                {isPending ? "Submitting...." : "Submit Request"}
                 <ArrowRight className="size-5 group-hover:translate-x-1 transition-transform duration-300" />
               </span>
             </button>
