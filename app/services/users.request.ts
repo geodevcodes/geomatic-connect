@@ -6,7 +6,7 @@ import { toast } from "sonner";
 export const useGetUsersRequest = (
   pageNumber: number = 1,
   limit: number,
-  search: string
+  search: string,
 ) => {
   return useQuery({
     queryKey: ["getUsersApi", pageNumber],
@@ -50,7 +50,7 @@ export const useUpdateUserProfile = () => {
           headers: {
             "Content-Type": "multipart/form-data", // let Axios handle the boundary
           },
-        }
+        },
       );
       return response.data;
     },
@@ -80,6 +80,39 @@ export const useDeleteUserRequest = () => {
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.message || "Something went wrong");
+    },
+  });
+};
+
+// RESEND VERIFICATION REQUEST
+export const useSendVerifyReminderRequest = () => {
+  return useMutation({
+    mutationFn: async ({
+      payload,
+      userId,
+    }: {
+      payload: any;
+      userId: string;
+    }) => {
+      try {
+        const response = await axiosInstance.post(
+          `/api/users/${userId}/remind-verification`,
+          payload,
+        );
+        return response.data;
+      } catch (error) {
+        throw error;
+      }
+    },
+    onSuccess: () => {
+      toast.success("Reminder sent successfully 🎉");
+    },
+    onError: (error: any) => {
+      if (error.response?.status === 500) {
+        toast.error("Internal Server Error");
+      } else {
+        toast.error(error.response?.data?.message);
+      }
     },
   });
 };
