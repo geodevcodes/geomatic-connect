@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
   useDeleteUserRequest,
+  useSendVerifyReminderRequest,
   useUpdateUserProfile,
 } from "@/app/services/users.request";
 import { useForm } from "react-hook-form";
@@ -93,6 +94,8 @@ export default function UsersDetails({ token, userId }: UsersDetailsProps) {
   const { data: userProfileData } = useGetUserByIdRequest(userId);
   const { mutate: updateUserRequest, isPending } = useUpdateUserProfile();
   const { mutate: deleteUser, isPending: isDeleting } = useDeleteUserRequest();
+  const { mutate: sendVerifyReminder, isPending: isSendingReminder } =
+    useSendVerifyReminderRequest();
   const router = useRouter();
 
   // REACT HOOK FORM LOGIC
@@ -171,6 +174,21 @@ export default function UsersDetails({ token, userId }: UsersDetailsProps) {
         },
         onError: () => {
           console.log("error updating user profile");
+        },
+      }
+    );
+  };
+
+  // Send Verification Reminder Logic
+  const sendVerifyReminderHandler = () => {
+    sendVerifyReminder(
+      { userId, payload: {} },
+      {
+        onSuccess: () => {
+          console.log("Verification reminder sent successfully");
+        },
+        onError: () => {
+          console.log("error sending verification reminder");
         },
       }
     );
@@ -476,6 +494,17 @@ export default function UsersDetails({ token, userId }: UsersDetailsProps) {
       </form>
       {/* === Submit Button === */}
       <div className="flex items-center gap-6">
+        {!userProfileData?.data?.isVerified && (
+          <button
+            onClick={() => sendVerifyReminderHandler()}
+            disabled={isSendingReminder}
+            className="w-[150px] mt-8 px-1.5 py-1.5 md:px-3 md:py-3 md:mt-0 font-light text-white rounded-sm shadow-sm bg-gradient-to-r from-[#49AD51] to-[#B1D045]"
+          >
+            <span className="text-sm md:text-base">
+              {isSendingReminder ? "Sending...." : "Send Reminder"}
+            </span>
+          </button>
+        )}
         <button
           onClick={() => deleteUserHandler()}
           disabled={isDeleting}
