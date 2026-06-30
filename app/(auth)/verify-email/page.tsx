@@ -4,8 +4,7 @@ import { redirect } from "next/navigation";
 
 export default async function VerifyEmailPage({ searchParams,}: {searchParams: any}) {
   const userEmail = searchParams.email;
-  const verifyToken = searchParams?.verifyToken;
-  if (!verifyToken || !userEmail) {
+  if ( !userEmail) {
     redirect("/login");
   }
   return (
