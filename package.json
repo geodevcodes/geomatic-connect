@@ -61,6 +61,9 @@
     "yup": "^1.4.0",
     "zod": "^3.24.1"
   },
+  "engines": {
+    "node": ">=24.x"
+  },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.16",
     "@testing-library/dom": "^10.4.0",
