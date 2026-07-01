@@ -52,7 +52,7 @@ export const initialMessage = {
 };
 
 export const blogInitialMessage = {
-  role: "system",
+  role: "system" as const,
   content: `You are a professional blog writer. Generate comprehensive blog posts based on user requirements.
   
   Response Format (JSON):
