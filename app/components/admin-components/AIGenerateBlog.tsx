@@ -29,6 +29,7 @@ export function AIGenerateBlog({
           content: parsedContent.content,
           slug: generateSlug(parsedContent.title),
         }));
+        setShowAIGenerator(false);
       } catch (error) {
         console.error("Failed to parse AI response:", error);
         setError("Failed to parse the generated content. Please try again.");
@@ -52,12 +53,11 @@ export function AIGenerateBlog({
     try {
       await append({
         role: "user",
-        content: `Generate a blog post about: ${prompt}. 
-        Tone: ${tone}. 
-        Style: ${style}. 
+        content: `Generate a blog post about: ${prompt}.
+        Tone: ${tone}.
+        Style: ${style}.
         Length: ${length}.`,
       });
-      setShowAIGenerator(false);
     } catch (err) {
       setError("Failed to generate content. Please try again.");
       setGenerating(false);
