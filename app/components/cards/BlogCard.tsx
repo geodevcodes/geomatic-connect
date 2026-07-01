@@ -63,7 +63,7 @@ export function BlogCard({
             {headings}
           </p>
           <p className="text-[#828282] text-lg dark:text-muted-foreground">
-            {content}
+            {content.split(" ").slice(0, 23).join(" ")}...
           </p>
           <p className="flex items-center gap-3 text-[#014751] dark:text-accent-foreground text-base mt-8 cursor-pointer">
             Read article <ArrowRight className="size-4" />
