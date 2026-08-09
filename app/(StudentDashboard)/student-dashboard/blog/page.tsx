@@ -1,7 +1,6 @@
 import BlogHome from "@/app/components/student-components/BlogHome";
 import type { Metadata } from "next";
 
-
 export const metadata: Metadata = {
   title: "Blog | Geomatic Connect",
   description: "Explore latest articles about geomatics",

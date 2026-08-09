@@ -13,7 +13,7 @@ export default async function UsersDetailsPage({ params }: { params: any }) {
   const token = session?.user?.token;
   const userId = params?._id;
 
-  if (!session?.user || !token) {
+  if (!token) {
     redirect("/login");
   }
 
@@ -23,7 +23,7 @@ export default async function UsersDetailsPage({ params }: { params: any }) {
   return (
     <>
       <main className="min-h-screen pt-6  xl:py-10 xl:px-2 ">
-        <UsersDetails token={token} userId={userId} />
+        <UsersDetails userId={userId} />
       </main>
     </>
   );

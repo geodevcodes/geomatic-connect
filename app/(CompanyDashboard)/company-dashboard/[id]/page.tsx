@@ -11,9 +11,9 @@ const isValidStudentId = (id: any) => {
 export default async function StudentDetailsPage({ params }: { params: any }) {
   const studentId = params.id;
   const session = await auth();
-    if (!session?.user) {
-      redirect("/login");
-    }
+  if (!session?.user) {
+    redirect("/login");
+  }
 
   if (!studentId || !isValidStudentId(studentId)) {
     notFound(); // Returns a 404 page
