@@ -11,9 +11,11 @@ export const metadata: Metadata = {
 export default async function BlogPage() {
   const session = await auth();
   const token = session?.user?.token;
-  if (!token) {
+  const userId = session?.user?._id;
+  if (!session?.user || !token || !userId) {
     redirect("/login");
   }
+
   return (
     <div>
       <BlogHome />

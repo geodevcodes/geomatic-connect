@@ -22,7 +22,6 @@ import { toast } from "sonner";
 import * as yup from "yup";
 
 interface UsersDetailsProps {
-  token: string;
   userId: string;
 }
 
@@ -88,7 +87,7 @@ const getValidationSchema = (userData: any) => {
   });
 };
 
-export default function UsersDetails({ token, userId }: UsersDetailsProps) {
+export default function UsersDetails({ userId }: UsersDetailsProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [userImage, setUserImage] = useState<string | undefined>(undefined);
   const { data: userProfileData } = useGetUserByIdRequest(userId);
@@ -141,7 +140,7 @@ export default function UsersDetails({ token, userId }: UsersDetailsProps) {
         setSelectedFile(file);
       } else {
         toast.error(
-          "Unsupported file type. Please upload a JPG, PNG, WEBP or JPEG"
+          "Unsupported file type. Please upload a JPG, PNG, WEBP or JPEG",
         );
       }
     }
@@ -175,7 +174,7 @@ export default function UsersDetails({ token, userId }: UsersDetailsProps) {
         onError: () => {
           console.log("error updating user profile");
         },
-      }
+      },
     );
   };
 
@@ -190,7 +189,7 @@ export default function UsersDetails({ token, userId }: UsersDetailsProps) {
         onError: () => {
           console.log("error sending verification reminder");
         },
-      }
+      },
     );
   };
 
@@ -205,7 +204,7 @@ export default function UsersDetails({ token, userId }: UsersDetailsProps) {
         onError: () => {
           console.log("error deleting the user");
         },
-      }
+      },
     );
   };
 
@@ -461,7 +460,7 @@ export default function UsersDetails({ token, userId }: UsersDetailsProps) {
                           errors.accomodation ? "#FEF3F2" : "#ffffff"
                         }
                         value={accommodationData.find(
-                          (option) => option.value === accomodationValue
+                          (option) => option.value === accomodationValue,
                         )}
                         onChange={(option: any) => {
                           setValue("accomodation", option?.value);
